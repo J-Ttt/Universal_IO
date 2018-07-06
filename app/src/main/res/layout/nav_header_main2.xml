@@ -20,7 +20,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="40dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Universal I/O Input"
+        android:text="Universal I/O Output"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"

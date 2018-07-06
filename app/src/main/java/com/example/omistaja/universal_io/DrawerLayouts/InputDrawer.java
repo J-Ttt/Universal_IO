@@ -1,4 +1,4 @@
-package com.example.omistaja.universal_io;
+package com.example.omistaja.universal_io.DrawerLayouts;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,13 +7,15 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 
-public class OutputDrawer implements NavigationView.OnNavigationItemSelectedListener {
+import com.example.omistaja.universal_io.R;
+
+public class InputDrawer implements NavigationView.OnNavigationItemSelectedListener {
 
     private Context c;
     private DrawerLayout ldrawer;
     private NavigationView drawer;
 
-    public OutputDrawer(Context cont, NavigationView drwer, DrawerLayout ldrwer) {
+    public InputDrawer(Context cont, NavigationView drwer, DrawerLayout ldrwer) {
 
         this.c = cont;
         this.drawer = drwer;

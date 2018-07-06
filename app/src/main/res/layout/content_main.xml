@@ -19,7 +19,7 @@
         android:focusable="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_stat_name" />
+        app:srcCompat="@drawable/ic_arrow_left" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/rightDraw"

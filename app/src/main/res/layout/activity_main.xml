@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_main"
+        app:headerLayout="@layout/nav_header_main2"
         app:menu="@menu/activity_main_rightdrawer"/>
 
 

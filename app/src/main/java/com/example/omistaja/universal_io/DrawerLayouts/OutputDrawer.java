@@ -1,4 +1,4 @@
-package com.example.omistaja.universal_io;
+package com.example.omistaja.universal_io.DrawerLayouts;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,17 +7,17 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 
-public class InputDrawer implements NavigationView.OnNavigationItemSelectedListener {
+public class OutputDrawer implements NavigationView.OnNavigationItemSelectedListener {
 
     private Context c;
-    private DrawerLayout ldrawer;
+    private DrawerLayout rdrawer;
     private NavigationView drawer;
 
-    public InputDrawer(Context cont, NavigationView drwer, DrawerLayout ldrwer) {
+    public OutputDrawer(Context cont, NavigationView drwer, DrawerLayout rdrwer) {
 
         this.c = cont;
         this.drawer = drwer;
-        this.ldrawer = ldrwer;
+        this.rdrawer = rdrwer;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -26,13 +26,8 @@ public class InputDrawer implements NavigationView.OnNavigationItemSelectedListe
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        switch(id) {
-            case R.id.nav_camera:
 
-                break;
-        }
-
-        ldrawer.closeDrawer(GravityCompat.START);
+        rdrawer.closeDrawer(GravityCompat.END);
         return true;
     }
 
