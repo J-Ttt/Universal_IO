@@ -7,13 +7,13 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 
-public class InputDrawer implements NavigationView.OnNavigationItemSelectedListener {
+public class OutputDrawer implements NavigationView.OnNavigationItemSelectedListener {
 
     private Context c;
     private DrawerLayout ldrawer;
     private NavigationView drawer;
 
-    public InputDrawer(Context cont, NavigationView drwer, DrawerLayout ldrwer) {
+    public OutputDrawer(Context cont, NavigationView drwer, DrawerLayout ldrwer) {
 
         this.c = cont;
         this.drawer = drwer;
