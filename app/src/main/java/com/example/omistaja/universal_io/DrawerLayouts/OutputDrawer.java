@@ -6,6 +6,10 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.example.omistaja.universal_io.Fragments.PhotoFragment;
+import com.example.omistaja.universal_io.R;
 
 public class OutputDrawer implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -25,6 +29,16 @@ public class OutputDrawer implements NavigationView.OnNavigationItemSelectedList
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+
+        if (id == R.id.nav_wifi2) {
+            Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_bluetooth2) {
+            Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_speaker) {
+            Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_nfc) {
+            Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+        }
 
 
         rdrawer.closeDrawer(GravityCompat.END);

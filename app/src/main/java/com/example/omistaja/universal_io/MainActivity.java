@@ -1,8 +1,16 @@
 package com.example.omistaja.universal_io;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,14 +20,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.omistaja.universal_io.DrawerLayouts.InputDrawer;
 import com.example.omistaja.universal_io.DrawerLayouts.OutputDrawer;
+import com.example.omistaja.universal_io.Fragments.PhotoFragment;
 
 public class MainActivity extends AppCompatActivity {
 
 
-    final int CAMERA_PIC_REQUEST = 1;
 
     private DrawerLayout drawerLayout;
 
@@ -60,13 +70,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        NavigationView outputView = findViewById(R.id.nav_view_right);
-        OutputDrawer outputDrawer = new OutputDrawer(this, outputView, drawerLayout);
-        outputView.setNavigationItemSelectedListener(outputDrawer);
 
         NavigationView inputView = findViewById(R.id.nav_view_left);
         InputDrawer inputDrawer = new InputDrawer(this, inputView, drawerLayout);
         inputView.setNavigationItemSelectedListener(inputDrawer);
+
+        NavigationView outputView = findViewById(R.id.nav_view_right);
+        OutputDrawer outputDrawer = new OutputDrawer(this, outputView, drawerLayout);
+        outputView.setNavigationItemSelectedListener(outputDrawer);
+
+
+/*
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+
+        ft.replace(R.id.content_frame, new CameraFragment());
+
+        ft.commit();
+*/
     }
 
     public void onResume() {
@@ -77,9 +98,14 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
     }
 
+    public void onDestroy(){
+        super.onDestroy();
+    }
+
 
     @Override
     public void onBackPressed() {
+
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
@@ -89,10 +115,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onActivityResult(int requestCode, int requestResult, Intent data) {
-        if (requestCode == CAMERA_PIC_REQUEST) {
-
-        }
+    public void onActivityResult (int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -101,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -116,4 +141,6 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
