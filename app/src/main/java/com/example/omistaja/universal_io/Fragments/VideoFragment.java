@@ -2,6 +2,7 @@ package com.example.omistaja.universal_io.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.example.omistaja.universal_io.R;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
+//TODO Request Users permission
 public class VideoFragment extends Fragment {
 
     private static final int REQUEST_VIDEO_CAPTURE = 1;
@@ -74,23 +76,21 @@ public class VideoFragment extends Fragment {
         videobutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(),"Not yet implemented", Toast.LENGTH_SHORT).show();
-                //Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                //startActivityForResult(videoIntent, REQUEST_VIDEO_CAPTURE);
+                Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                startActivityForResult(videoIntent, REQUEST_VIDEO_CAPTURE);
             }
         });
 
         return rootView;
     }
 
-/*
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_VIDEO_CAPTURE) {
-            if (resultCode == RESULT_OK) {
-
-            }
+        if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
+        Uri videoUri = data.getData();
+        videoView.setVideoURI(videoUri);
         }
     }
-    */
+
 }
