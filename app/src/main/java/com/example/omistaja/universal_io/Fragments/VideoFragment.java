@@ -3,6 +3,7 @@ package com.example.omistaja.universal_io.Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -79,6 +80,16 @@ public class VideoFragment extends Fragment {
             videobutton.setEnabled(false);
         }
 
+        /*
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.reset();
+                videoView.start();
+            }
+        });
+        */
+
         videobutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +107,7 @@ public class VideoFragment extends Fragment {
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
             Uri videoUri = data.getData();
             videoView.setVideoURI(videoUri);
+            videoView.start();
         }
     }
 

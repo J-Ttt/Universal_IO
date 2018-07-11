@@ -31,6 +31,10 @@ import com.example.omistaja.universal_io.DrawerLayouts.OutputDrawer;
 import com.example.omistaja.universal_io.Fragments.HomeFragment;
 import com.example.omistaja.universal_io.Fragments.PhotoFragment;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.BLUETOOTH;
+import static android.Manifest.permission.BLUETOOTH_ADMIN;
+import static android.Manifest.permission.BLUETOOTH_PRIVILEGED;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.RECORD_AUDIO;
@@ -39,10 +43,8 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 public class MainActivity extends AppCompatActivity {
 
 
-
+    FloatingActionButton leftDraw, rightDraw;
     private DrawerLayout drawerLayout;
-    private final String TAG = getClass().getSimpleName();
-    private HomeFragment mHomeFragment;
     public static final int RequestPermissionCode = 1;
 
     @Override
@@ -52,22 +54,35 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         requestPermission();
-        /*
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentById(TAG);
 
-
-        if(fragment = null) {
-            mHomeFragment = new HomeFragment();
-            fragmentManager.beginTransaction().add(R.id.content_frame, mHomeFragment, TAG).commit();
-        }
-        */
 
         drawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+
+        leftDraw = findViewById(R.id.leftDraw);
+        leftDraw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            }
+        });
+
+        rightDraw = findViewById(R.id.rightDraw);
+        rightDraw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!drawerLayout.isDrawerOpen(GravityCompat.END)) {
+                    drawerLayout.openDrawer(GravityCompat.END);
+                }
+            }
+        });
+
 
         NavigationView inputView = findViewById(R.id.nav_view_left);
         InputDrawer inputDrawer = new InputDrawer(this, inputView, drawerLayout);
@@ -78,14 +93,14 @@ public class MainActivity extends AppCompatActivity {
         outputView.setNavigationItemSelectedListener(outputDrawer);
 
 
-/*
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
 
-        ft.replace(R.id.content_frame, new CameraFragment());
+        ft.replace(R.id.content_frame, new HomeFragment());
 
         ft.commit();
-*/
+
     }
 
     public void onResume() {
@@ -147,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestPermission() {
         ActivityCompat.requestPermissions(MainActivity.this, new
-                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO, CAMERA, READ_EXTERNAL_STORAGE}, RequestPermissionCode);
+                String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO, CAMERA, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION},RequestPermissionCode);
     }
 
     @Override
@@ -159,7 +174,8 @@ public class MainActivity extends AppCompatActivity {
                     boolean RecordPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                     boolean CameraPermission = grantResults[2] == PackageManager.PERMISSION_GRANTED;
                     boolean ReadPermission = grantResults[3] == PackageManager.PERMISSION_GRANTED;
-                    if (StoragePermission && RecordPermission && CameraPermission && ReadPermission) {
+                    boolean LocationPermission = grantResults[4] == PackageManager.PERMISSION_GRANTED;
+                    if (StoragePermission && RecordPermission && CameraPermission && ReadPermission && LocationPermission) {
                         Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(MainActivity.this,"Permission  Denied",Toast.LENGTH_LONG).show();
