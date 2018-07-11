@@ -4,6 +4,7 @@ package com.example.omistaja.universal_io.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Camera;
@@ -35,7 +36,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
-//TODO Request Users permission
+
 public class PhotoFragment extends Fragment {
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
@@ -44,9 +45,8 @@ public class PhotoFragment extends Fragment {
     Button imagebutton;
 
     public PhotoFragment() {
-
+        
     }
-
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -85,6 +85,10 @@ public class PhotoFragment extends Fragment {
 
         imageView = rootView.findViewById(R.id.imageview);
 
+        if (!hasCamera()) {
+            imagebutton.setEnabled(false);
+        }
+
         imagebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,15 +119,14 @@ public class PhotoFragment extends Fragment {
 
             }
         }
+    }
 
-        /*
-        if (requestCode == REQUEST_VIDEO_CAPTURE) {
-            if (resultCode == Activity.RESULT_OK) {
-                Uri videoUri = (Uri) data.getExtras().get("data");
-                videoView.setVideoURI(videoUri);
-            }
+    public boolean hasCamera(){
+        if(getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+            return true;
+        } else {
+            return false;
         }
-        */
     }
 }
 

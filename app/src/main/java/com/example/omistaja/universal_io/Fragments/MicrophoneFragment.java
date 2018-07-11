@@ -18,7 +18,7 @@ import com.example.omistaja.universal_io.R;
 
 import java.io.IOException;
 
-//TODO Request Users permission
+
 public class MicrophoneFragment extends Fragment {
 
     private Button playbutton, stopbutton, recordbutton;
@@ -41,6 +41,7 @@ public class MicrophoneFragment extends Fragment {
         playbutton.setEnabled(false);
         stopbutton.setEnabled(false);
 
+        
         outputFile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/recording.3gp";
         myMediaRecorder = new MediaRecorder();
         myMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);

@@ -2,10 +2,12 @@ package com.example.omistaja.universal_io.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -24,7 +26,7 @@ import com.example.omistaja.universal_io.R;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
-//TODO Request Users permission
+
 public class VideoFragment extends Fragment {
 
     private static final int REQUEST_VIDEO_CAPTURE = 1;
@@ -73,6 +75,10 @@ public class VideoFragment extends Fragment {
 
         videoView = rootView.findViewById(R.id.videoview);
 
+        if(!hasCamera()){
+            videobutton.setEnabled(false);
+        }
+
         videobutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,8 +94,17 @@ public class VideoFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
-        Uri videoUri = data.getData();
-        videoView.setVideoURI(videoUri);
+            Uri videoUri = data.getData();
+            videoView.setVideoURI(videoUri);
+        }
+    }
+
+
+    private boolean hasCamera(){
+        if(getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
