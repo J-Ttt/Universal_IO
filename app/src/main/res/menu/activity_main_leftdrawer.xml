@@ -20,6 +20,10 @@
             android:id="@+id/nav_wifi"
             android:icon="@drawable/ic_wifi"
             android:title="WiFi" />
+        <item
+            android:id="@+id/nav_sensor"
+            android:icon="@drawable/ic_sensor"
+            android:title="Sensors" />
     </group>
 
 </menu>

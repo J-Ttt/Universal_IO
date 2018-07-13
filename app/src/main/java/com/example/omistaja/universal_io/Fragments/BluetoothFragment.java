@@ -16,14 +16,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.omistaja.universal_io.R;
 
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class BluetoothFragment extends Fragment {
 
     private static final String TAG = "BluetoothFragment";
@@ -49,9 +48,9 @@ public class BluetoothFragment extends Fragment {
         scanbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                    scanBT();
+                }
 
-                mBluetoothAdapter.startDiscovery();
-            }
         });
 
         btenable.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +68,21 @@ public class BluetoothFragment extends Fragment {
         btListView.setAdapter(arrayAdapter);
         return rootView;
     }
+
+    public void scanBT() {
+        if (mBluetoothAdapter.isEnabled()) {
+            if (mBluetoothAdapter.isDiscovering()) {
+                mBluetoothAdapter.cancelDiscovery();
+            }
+            if (arrayAdapter != null) {
+                arrayAdapter.clear();
+            }
+            mBluetoothAdapter.startDiscovery();
+        } else {
+            Toast.makeText(getActivity(), "Enable Bluetooth", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     public void enabledisableBT() {
         if (mBluetoothAdapter == null) {

@@ -30,16 +30,20 @@ public class OutputDrawer implements NavigationView.OnNavigationItemSelectedList
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_wifi2) {
-            Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_bluetooth2) {
-            Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_speaker) {
-            Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_nfc) {
-            Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+        switch (id){
+            case R.id.nav_wifi2:
+                Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_bluetooth2:
+                Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_speaker:
+                Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_nfc:
+                Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                break;
         }
-
 
         rdrawer.closeDrawer(GravityCompat.END);
         return true;

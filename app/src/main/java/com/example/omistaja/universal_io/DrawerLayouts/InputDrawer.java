@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.omistaja.universal_io.Fragments.BluetoothFragment;
 import com.example.omistaja.universal_io.Fragments.PhotoFragment;
 import com.example.omistaja.universal_io.Fragments.MicrophoneFragment;
+import com.example.omistaja.universal_io.Fragments.WifiFragment;
 import com.example.omistaja.universal_io.MainActivity;
 import com.example.omistaja.universal_io.R;
 
@@ -46,14 +47,22 @@ public class InputDrawer implements NavigationView.OnNavigationItemSelectedListe
 
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            fragment = new PhotoFragment();
-        } else if (id == R.id.nav_microphone) {
-            fragment = new MicrophoneFragment();
-        } else if (id == R.id.nav_bluetooth) {
-            fragment = new BluetoothFragment();
-        } else if (id == R.id.nav_wifi) {
-            Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+        switch (id) {
+            case R.id.nav_camera:
+                fragment = new PhotoFragment();
+                break;
+            case R.id.nav_microphone:
+                fragment = new MicrophoneFragment();
+                break;
+            case R.id.nav_bluetooth:
+                fragment = new BluetoothFragment();
+                break;
+            case R.id.nav_wifi:
+                fragment = new WifiFragment();
+                break;
+            case R.id.nav_sensor:
+                Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                break;
         }
 
         if (fragment != null) {
