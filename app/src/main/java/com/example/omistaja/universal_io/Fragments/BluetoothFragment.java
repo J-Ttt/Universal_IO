@@ -45,6 +45,9 @@ public class BluetoothFragment extends Fragment {
         btenable = rootView.findViewById(R.id.btenable);
         btListView = rootView.findViewById(R.id.bluetoothlist);
 
+        arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, BluetoothArrayList);
+        btListView.setAdapter(arrayAdapter);
+
         scanbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,8 +66,6 @@ public class BluetoothFragment extends Fragment {
             }
         });
 
-        arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, BluetoothArrayList);
-        btListView.setAdapter(arrayAdapter);
         return rootView;
     }
 
