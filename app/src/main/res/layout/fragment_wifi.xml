@@ -42,15 +42,27 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/wifiscanbtn"
+        android:id="@+id/p2pscanbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
-        android:text="Scan"
+        android:text="P2P Scan"
         app:layout_constraintBottom_toTopOf="@+id/wifilist"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/apscanbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="AP Scan"
+        app:layout_constraintBottom_toTopOf="@+id/wifilist"
+        app:layout_constraintEnd_toStartOf="@+id/wifiOnOff"
+        app:layout_constraintStart_toEndOf="@+id/p2pscanbtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

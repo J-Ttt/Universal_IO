@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import android.content.Context;
 import androidx.annotation.NonNull;
+
+import com.example.omistaja.universal_io.Fragments.SensorsFragment;
 import com.google.android.material.navigation.NavigationView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.core.view.GravityCompat;
@@ -61,7 +63,7 @@ public class InputDrawer implements NavigationView.OnNavigationItemSelectedListe
                 fragment = new WifiFragment();
                 break;
             case R.id.nav_sensor:
-                Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                fragment = new SensorsFragment();
                 break;
         }
 

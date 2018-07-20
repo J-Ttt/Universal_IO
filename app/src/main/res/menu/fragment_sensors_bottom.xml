@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_gyro"
+        android:icon="@drawable/ic_photo_camera"
+        android:title="@string/nav_photo" />
+    <item
+        android:id="@+id/nav_accelo"
+        android:icon="@drawable/ic_videocam"
+        android:title="@string/nav_video" />
+    <item
+        android:id="@+id/nav_magno"
+        android:icon="@drawable/ic_videocam"
+        android:title="@string/nav_video" />
+
+</menu>
