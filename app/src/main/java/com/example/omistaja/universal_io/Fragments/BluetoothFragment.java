@@ -48,6 +48,8 @@ public class BluetoothFragment extends Fragment {
         arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, BluetoothArrayList);
         btListView.setAdapter(arrayAdapter);
 
+
+
         scanbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -177,9 +177,9 @@ public class MainActivity extends AppCompatActivity {
                     boolean ReadPermission = grantResults[3] == PackageManager.PERMISSION_GRANTED;
                     boolean LocationPermission = grantResults[4] == PackageManager.PERMISSION_GRANTED;
                     if (StoragePermission && RecordPermission && CameraPermission && ReadPermission && LocationPermission) {
-                        Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_LONG).show();
+                       // Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(MainActivity.this,"Permission  Denied",Toast.LENGTH_LONG).show();
+                        //Toast.makeText(MainActivity.this,"Permission  Denied",Toast.LENGTH_LONG).show();
                     }
                 }
                 break;
