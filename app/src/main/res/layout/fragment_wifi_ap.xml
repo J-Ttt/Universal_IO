@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragments.WifiP2pFragment">
+    tools:context=".Fragments.WifiApFragment">
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="WiFi (P2P)"
+        android:text="WiFi (AP)"
         android:textAlignment="center"
         android:textSize="50sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,13 +41,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/p2pscanbtn"
+        android:id="@+id/apscanbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
-        android:text="P2P Scan"
+        android:text="AP Scan"
         app:layout_constraintBottom_toTopOf="@+id/wifilist"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -14,19 +14,19 @@ import com.example.omistaja.universal_io.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SensorsFragment extends Fragment {
+public class AccelerometerFragment extends Fragment {
 
 
-    public SensorsFragment() {
+    public AccelerometerFragment() {
         // Required empty public constructor
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_sensors, container, false);
-
-        return rootView;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_accelerometer, container, false);
     }
 
 }

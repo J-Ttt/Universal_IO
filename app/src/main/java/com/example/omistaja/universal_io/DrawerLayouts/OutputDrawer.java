@@ -22,6 +22,7 @@ public class OutputDrawer implements NavigationView.OnNavigationItemSelectedList
         this.c = cont;
         this.drawer = drwer;
         this.rdrawer = rdrwer;
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

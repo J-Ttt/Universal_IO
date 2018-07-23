@@ -1,26 +1,22 @@
 package com.example.omistaja.universal_io.DrawerLayouts;
 
-import android.app.Activity;
-import android.graphics.Camera;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import android.content.Context;
 import androidx.annotation.NonNull;
 
-import com.example.omistaja.universal_io.Fragments.SensorsFragment;
+import com.example.omistaja.universal_io.Fragments.AccelerometerFragment;
+import com.example.omistaja.universal_io.Fragments.WifiP2pFragment;
 import com.google.android.material.navigation.NavigationView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.omistaja.universal_io.Fragments.BluetoothFragment;
 import com.example.omistaja.universal_io.Fragments.PhotoFragment;
 import com.example.omistaja.universal_io.Fragments.MicrophoneFragment;
-import com.example.omistaja.universal_io.Fragments.WifiFragment;
-import com.example.omistaja.universal_io.MainActivity;
 import com.example.omistaja.universal_io.R;
 
 public class InputDrawer implements NavigationView.OnNavigationItemSelectedListener {
@@ -35,9 +31,8 @@ public class InputDrawer implements NavigationView.OnNavigationItemSelectedListe
         this.drawer = drwer;
         this.ldrawer = ldrwer;
 
-
-
     }
+
 
 
 
@@ -60,10 +55,10 @@ public class InputDrawer implements NavigationView.OnNavigationItemSelectedListe
                 fragment = new BluetoothFragment();
                 break;
             case R.id.nav_wifi:
-                fragment = new WifiFragment();
+                fragment = new WifiP2pFragment();
                 break;
             case R.id.nav_sensor:
-                fragment = new SensorsFragment();
+                fragment = new AccelerometerFragment();
                 break;
         }
 

@@ -4,14 +4,14 @@
     <item
         android:id="@+id/nav_gyro"
         android:icon="@drawable/ic_photo_camera"
-        android:title="@string/nav_photo" />
+        android:title="Gyroscope" />
     <item
         android:id="@+id/nav_accelo"
         android:icon="@drawable/ic_videocam"
-        android:title="@string/nav_video" />
+        android:title="Accelerometer" />
     <item
         android:id="@+id/nav_magno"
         android:icon="@drawable/ic_videocam"
-        android:title="@string/nav_video" />
+        android:title="Magnetometer" />
 
 </menu>

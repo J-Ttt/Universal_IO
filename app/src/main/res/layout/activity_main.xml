@@ -20,7 +20,9 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_leftdrawer"/>
+        app:menu="@menu/activity_main_leftdrawer">
+
+    </com.google.android.material.navigation.NavigationView>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view_right"
@@ -29,7 +31,9 @@
         android:layout_gravity="end"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main2"
-        app:menu="@menu/activity_main_rightdrawer"/>
+        app:menu="@menu/activity_main_rightdrawer">
+        
+    </com.google.android.material.navigation.NavigationView>
 
 
 </androidx.drawerlayout.widget.DrawerLayout>

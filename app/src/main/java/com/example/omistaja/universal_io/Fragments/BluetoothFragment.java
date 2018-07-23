@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 public class BluetoothFragment extends Fragment {
 
+    private Context _context;
     private static final String TAG = "BluetoothFragment";
     private Button scanbtn, btenable;
     private ListView btListView;
@@ -36,6 +37,10 @@ public class BluetoothFragment extends Fragment {
 
     }
 
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        _context = context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,7 +50,7 @@ public class BluetoothFragment extends Fragment {
         btenable = rootView.findViewById(R.id.btenable);
         btListView = rootView.findViewById(R.id.bluetoothlist);
 
-        arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, BluetoothArrayList);
+        arrayAdapter = new ArrayAdapter<>(_context, android.R.layout.simple_list_item_1, BluetoothArrayList);
         btListView.setAdapter(arrayAdapter);
 
 
@@ -99,7 +104,7 @@ public class BluetoothFragment extends Fragment {
             startActivity(enableBTintent);
 
             IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-            getActivity().registerReceiver(myReceiver, BTIntent);
+            _context.registerReceiver(myReceiver, BTIntent);
         }
 
         if (mBluetoothAdapter.isEnabled()) {
@@ -112,14 +117,14 @@ public class BluetoothFragment extends Fragment {
     public void onResume(){
         super.onResume();
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        getActivity().registerReceiver(myReceiver, intentFilter);
+        _context.registerReceiver(myReceiver, intentFilter);
     }
 
 
     public void onPause(){
         super.onPause();
         mBluetoothAdapter.cancelDiscovery();
-        getActivity().unregisterReceiver(myReceiver);
+        _context.unregisterReceiver(myReceiver);
     }
 
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {

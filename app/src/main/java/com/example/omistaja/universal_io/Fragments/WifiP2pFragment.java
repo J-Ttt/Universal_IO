@@ -1,70 +1,104 @@
 package com.example.omistaja.universal_io.Fragments;
 
 
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.omistaja.universal_io.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 
-public class WifiFragment extends Fragment {
+public class WifiP2pFragment extends Fragment {
 
-    private static final String TAG = "WifiFragment";
-    private Button p2pscanbtn, wifiOnOff, apscanbtn;
+    private Context _context;
+    private static final String TAG = "WifiP2pFragment";
+    private Button p2pscanbtn, wifiOnOff;
     private ListView wifilist;
     private WifiManager mWifiManager;
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private ArrayAdapter<String> arrayAdapter;
-    private IntentFilter mIntentFilter, apIntentFilter;
+    private IntentFilter mIntentFilter;
     private List<WifiP2pDevice> peers = new ArrayList<>();
     String[] deviceNameArray;
     WifiP2pDevice[] deviceArray;
-    int size = 0;
-    List<ScanResult> results;
-    String ITEM_KEY = "key";
-    ArrayList<String> arraylist = new ArrayList<>();
 
-    public WifiFragment() {
+    public WifiP2pFragment() {
 
     }
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        _context = context;
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment = null;
+
+            int id = item.getItemId();
+
+            switch (id) {
+                case R.id.nav_p2p:
+                    fragment = new WifiP2pFragment();
+                    break;
+                case R.id.nav_ap:
+                    fragment = new WifiApFragment();
+                    break;
+            }
+
+            if (fragment != null) {
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                ft.replace(R.id.content_frame, fragment);
+                ft.commit();
+            }
+
+            return true;
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_wifi, container, false);
 
+        BottomNavigationView p2pap = rootView.findViewById(R.id.bottomNavigationView2);
+        p2pap.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
         p2pscanbtn = rootView.findViewById(R.id.p2pscanbtn);
-        apscanbtn = rootView.findViewById(R.id.apscanbtn);
         wifiOnOff = rootView.findViewById(R.id.wifiOnOff);
         wifilist = rootView.findViewById(R.id.wifilist);
 
         initialWork();
+        _context.registerReceiver(wifiReceiver, mIntentFilter);
 
         p2pscanbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +108,7 @@ public class WifiFragment extends Fragment {
             }
         });
 
+
         wifiOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,34 +116,19 @@ public class WifiFragment extends Fragment {
             }
         });
 
-        apscanbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                scanapwifi();
-            }
-        });
-
-        arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, arraylist);
-        wifilist.setAdapter(arrayAdapter);
-
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().registerReceiver(wifiReceiver, mIntentFilter);
+        _context.registerReceiver(wifiReceiver, mIntentFilter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(wifiReceiver);
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
+        _context.unregisterReceiver(wifiReceiver);
     }
 
     private void enableWifi() {
@@ -126,20 +146,7 @@ public class WifiFragment extends Fragment {
         }
     }
 
-    public void scanapwifi() {
-        Log.d(TAG, "Succesfully pressed ScanAP");
-        peers.clear();
-        arraylist.clear();
-        getContext().registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        mWifiManager.startScan();
-        Log.d("WifScanner", "scanWifiNetworks");
-        Toast.makeText(getContext(), "Scanning....", Toast.LENGTH_SHORT).show();
-
-    }
-
-
-    public void scanp2pwifi() {
-        arraylist.clear();
+    private void scanp2pwifi() {
         peers.clear();
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
@@ -157,12 +164,9 @@ public class WifiFragment extends Fragment {
 
     private void initialWork(){
 
-        mWifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        mManager = (WifiP2pManager) getContext().getSystemService(Context.WIFI_P2P_SERVICE);
+        mWifiManager = (WifiManager) _context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        mManager = (WifiP2pManager) _context.getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(getContext(), Looper.getMainLooper(), null);
-
-        apIntentFilter = new IntentFilter();
-        apIntentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -171,11 +175,6 @@ public class WifiFragment extends Fragment {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION);
 
-        if (!mWifiManager.isWifiEnabled()) {
-            mWifiManager.setWifiEnabled(true);
-        } else {
-            mWifiManager.setWifiEnabled(false);
-        }
 
         if (mWifiManager.isWifiEnabled()) {
             mWifiManager.setWifiEnabled(false);
@@ -210,17 +209,16 @@ public class WifiFragment extends Fragment {
                     index++;
                 }
                 Log.d(TAG, "Adding peers 3...");
-                arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, deviceNameArray);
+                arrayAdapter = new ArrayAdapter<>(_context, android.R.layout.simple_list_item_1, deviceNameArray);
                 wifilist.setAdapter(arrayAdapter);
                 Log.d(TAG, "Succesfully added");
                 Log.d(TAG, Integer.toString(peerList.getDeviceList().toArray().length));
             }
 
             if (peers.size() == 0) {
-                Toast.makeText(getActivity(), "No Devices", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "No Devices", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "No devices available");
             }
-
         }
         };
 
@@ -229,31 +227,12 @@ public class WifiFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            Log.d("WifScanner", "onReceive");
-            results = mWifiManager.getScanResults();
-            size = results.size();
-            getContext().unregisterReceiver(this);
-            try
-            {
-                while (size >= 0)
-                {
-                    size--;
-                    arraylist.add(results.get(size).SSID);
-                    arrayAdapter.notifyDataSetChanged();
-                }
-            }
-            catch (Exception e)
-            {
-                Log.w("WifScanner", "Exception: "+e);
-
-            }
-
             if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
                 final int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
                 if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                    Toast.makeText(getActivity(), "WiFi is enabled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "WiFi is disabled", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getActivity(), "WiFi is disabled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "WiFi is enabled", Toast.LENGTH_SHORT).show();
                 }
 
             } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {

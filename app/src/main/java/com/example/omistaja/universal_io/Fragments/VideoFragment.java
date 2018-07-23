@@ -33,10 +33,15 @@ public class VideoFragment extends Fragment {
     private static final int REQUEST_VIDEO_CAPTURE = 1;
     VideoView videoView;
     Button videobutton;
-    Context c;
+    Context _context;
 
     public VideoFragment() {
 
+    }
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        _context = context;
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -46,10 +51,13 @@ public class VideoFragment extends Fragment {
 
             int id = item.getItemId();
 
-            if (id == R.id.nav_photobut) {
-                fragment = new PhotoFragment();
-            } else if (id == R.id.nav_videobut) {
-                fragment = new VideoFragment();
+            switch (id) {
+                case R.id.nav_photobut:
+                    fragment = new PhotoFragment();
+                    break;
+                case R.id.nav_videobut:
+                    fragment = new VideoFragment();
+                    break;
             }
 
             if (fragment != null) {
@@ -113,7 +121,7 @@ public class VideoFragment extends Fragment {
 
 
     private boolean hasCamera(){
-        if(getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+        if(_context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
             return true;
         } else {
             return false;

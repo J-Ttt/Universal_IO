@@ -43,9 +43,15 @@ public class PhotoFragment extends Fragment {
     ImageView imageView;
     Context c;
     Button imagebutton;
+    private Context _context;
 
     public PhotoFragment() {
         
+    }
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        _context = context;
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -54,6 +60,15 @@ public class PhotoFragment extends Fragment {
             Fragment fragment = null;
 
             int id = item.getItemId();
+
+            switch (id) {
+                case R.id.nav_photobut:
+                    fragment = new PhotoFragment();
+                    break;
+                case R.id.nav_videobut:
+                    fragment = new VideoFragment();
+                    break;
+            }
 
             if (id == R.id.nav_photobut) {
                 fragment = new PhotoFragment();
@@ -122,7 +137,7 @@ public class PhotoFragment extends Fragment {
     }
 
     public boolean hasCamera(){
-        if(getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+        if(_context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
             return true;
         } else {
             return false;

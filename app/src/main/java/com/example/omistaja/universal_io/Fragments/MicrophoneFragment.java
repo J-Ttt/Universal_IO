@@ -2,6 +2,7 @@ package com.example.omistaja.universal_io.Fragments;
 
 
 
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import java.io.IOException;
 
 public class MicrophoneFragment extends Fragment {
 
+    private Context _context;
     private Button playbutton, stopbutton, recordbutton;
     private MediaRecorder myMediaRecorder;
     private String outputFile;
@@ -29,6 +31,10 @@ public class MicrophoneFragment extends Fragment {
 
     }
 
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        _context = context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
