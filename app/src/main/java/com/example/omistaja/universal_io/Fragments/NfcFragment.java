@@ -15,10 +15,10 @@ import com.example.omistaja.universal_io.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GyroscopeFragment extends Fragment {
+public class NfcFragment extends Fragment {
 
 
-    public GyroscopeFragment() {
+    public NfcFragment() {
         // Required empty public constructor
     }
 
@@ -29,7 +29,7 @@ public class GyroscopeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_gyroscope, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_nfc, container, false);
 
         return rootView;
     }
