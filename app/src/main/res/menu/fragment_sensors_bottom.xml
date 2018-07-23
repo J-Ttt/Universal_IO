@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/nav_gyro"
-        android:icon="@drawable/ic_photo_camera"
-        android:title="Gyroscope" />
+    <!--Gyroscope by Dániel Aczél from the Noun Project
+        accelerometer by Kevin Schumacher from the Noun Project
+        Compass Needle by Guilhem from the Noun Project
+         -->
+
     <item
         android:id="@+id/nav_accelo"
-        android:icon="@drawable/ic_videocam"
-        android:title="Accelerometer" />
+        android:icon="@drawable/ic_gyroscope"
+        android:title="Accelerometer"/>
+    <item
+        android:id="@+id/nav_gyro"
+        android:icon="@drawable/ic_accelerometer"
+        android:title="Gyroscope" />
     <item
         android:id="@+id/nav_magno"
-        android:icon="@drawable/ic_videocam"
+        android:icon="@drawable/ic_magneto"
         android:title="Magnetometer" />
 
 </menu>

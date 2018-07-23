@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.omistaja.universal_io.R;
-import com.google.android.material.bottomnavigation.BottomNavigationMenu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
@@ -28,9 +27,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  */
 public class AccelerometerFragment extends Fragment implements SensorEventListener {
 
-    Context _context;
-    TextView accelX, accelY, accelZ;
-    Sensor accelerometer;
+    private Context _context;
+    private TextView accelX, accelY, accelZ;
+    private Sensor accelerometer;
     private SensorManager sensorManager;
 
     public AccelerometerFragment() {
@@ -51,13 +50,13 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
             int id = item.getItemId();
 
             switch (id) {
-                case R.id.nav_p2p:
+                case R.id.nav_accelo:
                     fragment = new AccelerometerFragment();
                     break;
-                case R.id.nav_ap:
+                case R.id.nav_gyro:
                     fragment = new GyroscopeFragment();
                     break;
-                case R.id.nav_nfc:
+                case R.id.nav_magno:
                     fragment = new MagnometerFragment();
                     break;
 
@@ -78,15 +77,31 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_accelerometer, container, false);
 
+        BottomNavigationView p2pap = rootView.findViewById(R.id.bottomNavigationView3);
+        p2pap.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
         sensorManager = (SensorManager) _context.getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
         accelX = rootView.findViewById(R.id.accelX);
         accelY = rootView.findViewById(R.id.accelY);
         accelZ = rootView.findViewById(R.id.accelZ);
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
 
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, accelerometer,SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this, accelerometer);
     }
 
     @Override
