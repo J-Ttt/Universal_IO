@@ -139,20 +139,18 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
         pitch = (float) Math.toDegrees(pitch);
         roll = (float) Math.toDegrees(roll);
 
-        float azimut180 = 180 + azimut;
-        float pitch180 = 180 + pitch;
-        float roll180 = 180 + roll;
+        int azimut180 = 180 + (int) azimut;
+        int pitch180 = 180 + (int) pitch;
+        int roll180 = 180 + (int) roll;
 
-        float azSum = (float)Math.round(azimut180 * 100) / 100;
-        float pitSum = (float)Math.round(pitch180 * 100) / 100;
-        float rollSum = (float)Math.round(roll180 * 100) / 100;
+        final char DEGREE = '\u00B0';
 
-        String sMagnetX = Float.toString(azSum);
-        magnetoX.setText(sMagnetX);
-        String sMagnetY = Float.toString(pitSum);
-        magnetoY.setText(sMagnetY);
-        String sMagnetZ = Float.toString(rollSum);
-        magnetoZ.setText(sMagnetZ);
+        String sMagnetX = Integer.toString(azimut180);
+        magnetoX.setText(sMagnetX + DEGREE);
+        String sMagnetY = Integer.toString(pitch180);
+        magnetoY.setText(sMagnetY + DEGREE);
+        String sMagnetZ = Integer.toString(roll180);
+        magnetoZ.setText(sMagnetZ + DEGREE);
 
     }
 
