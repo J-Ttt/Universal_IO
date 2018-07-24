@@ -22,6 +22,9 @@ import android.widget.TextView;
 import com.example.omistaja.universal_io.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 
 public class MagnometerFragment extends Fragment implements SensorEventListener {
 
@@ -29,7 +32,9 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
     Context _context;
     TextView magnetoX, magnetoY, magnetoZ;
     SensorManager sensorManager;
-    Sensor magnoMeter;
+    Sensor magnoMeter, accelMeter;
+    float[] mGravity, mMagnetic;
+    float azimut, pitch, roll;
 
     public MagnometerFragment() {
 
@@ -80,12 +85,14 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
         p2pap.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
         sensorManager = (SensorManager) _context.getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
         magnoMeter = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        accelMeter = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         magnetoX = rootView.findViewById(R.id.magnetoX);
         magnetoY = rootView.findViewById(R.id.magnetoY);
         magnetoZ = rootView.findViewById(R.id.magnetoZ);
 
         sensorManager.registerListener(this, magnoMeter, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
+        sensorManager.registerListener(this, accelMeter, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
 
         return rootView;
     }
@@ -94,6 +101,11 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
     public void onResume() {
         super.onResume();
         sensorManager.registerListener(this, magnoMeter, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
+        sensorManager.registerListener(this, accelMeter, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
+    }
+
+    public void convertDegree() {
+
     }
 
     @Override
@@ -103,9 +115,45 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        magnetoX.setText("X Value: " + sensorEvent.values[0]);
-        magnetoY.setText("Y Value: " + sensorEvent.values[1]);
-        magnetoZ.setText("Z Value: " + sensorEvent.values[2]);
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+            mGravity = sensorEvent.values;
+
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+            mMagnetic = sensorEvent.values;
+
+        if (mGravity != null && mMagnetic != null) {
+            float R[] = new float[9];
+            float I[] = new float[9];
+
+            boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mMagnetic);
+            if (success) {
+                float orientation[] = new float[3];
+                SensorManager.getOrientation(R, orientation);
+                azimut = orientation[0];
+                pitch = orientation[1];
+                roll = orientation[2];
+
+            }
+        }
+        azimut = (float) Math.toDegrees(azimut);
+        pitch = (float) Math.toDegrees(pitch);
+        roll = (float) Math.toDegrees(roll);
+
+        float azimut180 = 180 + azimut;
+        float pitch180 = 180 + pitch;
+        float roll180 = 180 + roll;
+
+        float azSum = (float)Math.round(azimut180 * 100) / 100;
+        float pitSum = (float)Math.round(pitch180 * 100) / 100;
+        float rollSum = (float)Math.round(roll180 * 100) / 100;
+
+        String sMagnetX = Float.toString(azSum);
+        magnetoX.setText(sMagnetX);
+        String sMagnetY = Float.toString(pitSum);
+        magnetoY.setText(sMagnetY);
+        String sMagnetZ = Float.toString(rollSum);
+        magnetoZ.setText(sMagnetZ);
+
     }
 
 }
