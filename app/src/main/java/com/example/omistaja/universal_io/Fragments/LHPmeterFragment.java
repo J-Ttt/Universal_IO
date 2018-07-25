@@ -97,6 +97,12 @@ public class LHPmeterFragment extends Fragment implements SensorEventListener {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+    
+
+    @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
