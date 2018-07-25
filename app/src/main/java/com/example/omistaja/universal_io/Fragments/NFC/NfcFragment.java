@@ -1,4 +1,4 @@
-package com.example.omistaja.universal_io.Fragments;
+package com.example.omistaja.universal_io.Fragments.NFC;
 
 
 import android.content.Context;

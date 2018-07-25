@@ -28,6 +28,10 @@
             android:id="@+id/nav_gesture"
             android:icon="@drawable/ic_touch"
             android:title="Gesture" />
+        <item
+            android:id="@+id/nav_usb"
+            android:icon="@drawable/ic_usb"
+            android:title="USB"/>
     </group>
 
 </menu>

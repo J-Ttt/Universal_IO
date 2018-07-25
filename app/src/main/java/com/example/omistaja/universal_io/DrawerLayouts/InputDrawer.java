@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.example.omistaja.universal_io.Fragments.AccelerometerFragment;
 import com.example.omistaja.universal_io.Fragments.GestureFragment;
+import com.example.omistaja.universal_io.Fragments.UsbFragment;
 import com.example.omistaja.universal_io.Fragments.WifiP2pFragment;
 import com.google.android.material.navigation.NavigationView;
 import androidx.fragment.app.FragmentActivity;
@@ -63,6 +64,9 @@ public class InputDrawer implements NavigationView.OnNavigationItemSelectedListe
                 break;
             case R.id.nav_gesture:
                 fragment = new GestureFragment();
+                break;
+            case R.id.nav_usb:
+                fragment = new UsbFragment();
                 break;
         }
 
