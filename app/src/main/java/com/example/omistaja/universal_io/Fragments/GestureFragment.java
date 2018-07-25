@@ -15,21 +15,23 @@ import com.example.omistaja.universal_io.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LightmeterFragment extends Fragment {
+public class GestureFragment extends Fragment {
 
+    Context _context;
 
-    public LightmeterFragment() {
-        // Required empty public constructor
+    public GestureFragment() {
+
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        _context = context;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_lightmeter, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_gesture, container, false);
 
         return rootView;
     }

@@ -63,6 +63,9 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
                 case R.id.nav_magno:
                     fragment = new MagnometerFragment();
                     break;
+                case R.id.nav_miscsens:
+                    fragment = new LHPmeterFragment();
+                    break;
 
             }
 
@@ -104,10 +107,6 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
         sensorManager.registerListener(this, accelMeter, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
     }
 
-    public void convertDegree() {
-
-    }
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
@@ -146,11 +145,11 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
         final char DEGREE = '\u00B0';
 
         String sMagnetX = Integer.toString(azimut180);
-        magnetoX.setText(sMagnetX + DEGREE);
+        magnetoX.setText("X Value: " + sMagnetX + DEGREE);
         String sMagnetY = Integer.toString(pitch180);
-        magnetoY.setText(sMagnetY + DEGREE);
+        magnetoY.setText("Y Value: " + sMagnetY + DEGREE);
         String sMagnetZ = Integer.toString(roll180);
-        magnetoZ.setText(sMagnetZ + DEGREE);
+        magnetoZ.setText("Z Value: " + sMagnetZ + DEGREE);
 
     }
 

@@ -18,5 +18,9 @@
         android:id="@+id/nav_magno"
         android:icon="@drawable/ic_magneto"
         android:title="Magnetometer" />
+    <item
+        android:id="@+id/nav_miscsens"
+        android:icon="@drawable/ic_magneto"
+        android:title="Misc"/>
 
 </menu>

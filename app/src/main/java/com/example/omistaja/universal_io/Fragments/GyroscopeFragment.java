@@ -59,6 +59,9 @@ public class GyroscopeFragment extends Fragment implements SensorEventListener {
                 case R.id.nav_magno:
                     fragment = new MagnometerFragment();
                     break;
+                case R.id.nav_miscsens:
+                    fragment = new LHPmeterFragment();
+                    break;
 
             }
 
