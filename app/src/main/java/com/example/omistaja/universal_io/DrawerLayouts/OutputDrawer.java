@@ -13,13 +13,13 @@ import com.example.omistaja.universal_io.R;
 
 public class OutputDrawer implements NavigationView.OnNavigationItemSelectedListener {
 
-    private Context c;
+    private Context _context;
     private DrawerLayout rdrawer;
     private NavigationView drawer;
 
-    public OutputDrawer(Context cont, NavigationView drwer, DrawerLayout rdrwer) {
+    public OutputDrawer(Context context, NavigationView drwer, DrawerLayout rdrwer) {
 
-        this.c = cont;
+        this._context = context;
         this.drawer = drwer;
         this.rdrawer = rdrwer;
 
@@ -33,16 +33,16 @@ public class OutputDrawer implements NavigationView.OnNavigationItemSelectedList
 
         switch (id){
             case R.id.nav_wifi2:
-                Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_context, "Not yet implemented", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_bluetooth2:
-                Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_context, "Not yet implemented", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_speaker:
-                Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_context, "Not yet implemented", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_nfc:
-                Toast.makeText(c, "Not yet implemented", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_context, "Not yet implemented", Toast.LENGTH_SHORT).show();
                 break;
         }
 
