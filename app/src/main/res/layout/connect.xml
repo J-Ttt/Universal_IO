@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -14,12 +15,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <EditText
+    <in.anshul.libray.PasswordEditText
         android:id="@+id/textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/textSSID1"
-        android:layout_marginTop="5dp"/>
+        android:layout_marginTop="5dp"
+        app:password_visible="false"
+        app:show_drawable="@drawable/ic_showpass"
+        app:hide_drawable="@drawable/ic_hidepass"/>
 
     <Button
         android:id="@+id/okButton"
