@@ -28,6 +28,7 @@ import com.example.omistaja.universal_io.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -44,7 +45,8 @@ public class WifiApFragment extends Fragment {
     ArrayList<String> arraylist = new ArrayList<>();
     private IntentFilter apIntentFilter;
     int size = 0;
-    List<ScanResult> results;
+
+
 
 
     public WifiApFragment() {
@@ -166,8 +168,10 @@ public class WifiApFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d("WifScanner", "onReceive");
-            results = mWifiManager.getScanResults();
+            List<ScanResult> results = mWifiManager.getScanResults();
+            wifilist.setAdapter(arrayAdapter);
             size = results.size();
+            HashMap<String, Integer> signalStrength = new HashMap<String, Integer>();
             _context.unregisterReceiver(this);
             try
             {

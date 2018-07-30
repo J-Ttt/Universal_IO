@@ -89,8 +89,6 @@ public class GyroscopeFragment extends Fragment implements SensorEventListener {
         gyroY = rootView.findViewById(R.id.gyroY);
         gyroZ = rootView.findViewById(R.id.gyroZ);
 
-        sensorManager.registerListener(this, gyroScope, SensorManager.SENSOR_DELAY_UI, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
-
         return rootView;
     }
 

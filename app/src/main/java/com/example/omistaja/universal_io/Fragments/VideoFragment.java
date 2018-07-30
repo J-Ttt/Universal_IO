@@ -121,11 +121,7 @@ public class VideoFragment extends Fragment {
 
 
     private boolean hasCamera(){
-        if(_context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-            return true;
-        } else {
-            return false;
-        }
+        return _context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
     }
 
 }

@@ -100,10 +100,7 @@ public class PhotoFragment extends Fragment {
 
         imageView = rootView.findViewById(R.id.imageview);
 
-        if (!hasCamera()) {
-            imagebutton.setEnabled(false);
-        }
-
+        //Click listener and starts image capture activity for result (the image)
         imagebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,6 +116,7 @@ public class PhotoFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
 
@@ -130,17 +128,10 @@ public class PhotoFragment extends Fragment {
 
                 Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
+                //Sets picture taken in imageview
                 imageView.setImageBitmap(bitmap);
 
             }
-        }
-    }
-
-    public boolean hasCamera(){
-        if(_context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-            return true;
-        } else {
-            return false;
         }
     }
 }
