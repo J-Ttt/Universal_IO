@@ -6,26 +6,13 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.nfc.NfcAdapter;
-import android.nfc.tech.IsoDep;
-import android.nfc.tech.MifareClassic;
-import android.nfc.tech.MifareUltralight;
-import android.nfc.tech.Ndef;
-import android.nfc.tech.NdefFormatable;
-import android.nfc.tech.NfcA;
-import android.nfc.tech.NfcB;
-import android.nfc.tech.NfcF;
-import android.nfc.tech.NfcV;
 import android.os.Bundle;
 
 import com.example.omistaja.universal_io.Fragments.AccelerometerFragment;
 import com.example.omistaja.universal_io.Fragments.BluetoothFragment;
 import com.example.omistaja.universal_io.Fragments.GestureFragment;
-import com.example.omistaja.universal_io.Fragments.GyroscopeFragment;
-import com.example.omistaja.universal_io.Fragments.LHPmeterFragment;
 import com.example.omistaja.universal_io.Fragments.MicrophoneFragment;
-import com.example.omistaja.universal_io.Fragments.NfcFragment;
 import com.example.omistaja.universal_io.Fragments.PhotoFragment;
-import com.example.omistaja.universal_io.Fragments.UsbFragment;
 import com.example.omistaja.universal_io.Fragments.WifiP2pFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -35,7 +22,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.util.Log;
 import android.view.View;
 
 import com.google.android.material.navigation.NavigationView;
@@ -48,7 +34,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,19 +47,14 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final static String TAG = "MainActivity";
+    public static final String TAG = MainActivity.class.getSimpleName();
     FloatingActionButton leftDraw, rightDraw;
     private DrawerLayout drawerLayout;
     public static final int RequestPermissionCode = 1;
     PendingIntent intent;
     NavigationView navigationView;
-    NfcAdapter mAdapter;
-    public PendingIntent mPendingIntent;
-    private IntentFilter[] mFilters;
-    private String[][] mTechLists;
-    public int mCount = 0;
-    TextView nfcView;
     private String currentInput;
+
 
 
     @Override
@@ -97,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         initAll();
+
+
+
 
         leftDraw = findViewById(R.id.leftDraw);
         leftDraw.setOnClickListener(new View.OnClickListener() {
@@ -159,8 +142,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onResume();
         setRightItemsVisible();
         setleftItemsInvisible();
-        if (mAdapter != null) mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters,
-                mTechLists);
     }
 
     public void onStop() {
@@ -170,7 +151,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onPause() {
         super.onPause();
-        if (mAdapter != null) mAdapter.disableForegroundDispatch(this);
     }
 
     public void onDestroy() {
@@ -231,16 +211,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+
+
+        /*
         // Check if the fragment is an instance of the right fragment
         Log.d(TAG, "Do I get here 1?");
-        if (fragment instanceof NfcFragment) {
-            NfcFragment my = (NfcFragment) fragment;
+        if (fragment instanceof NFCReadFragment) {
+            NFCReadFragment my = (NFCReadFragment) fragment;
             Log.d(TAG, "Do I get here 2?");
             // Pass intent or its data to the fragment's method
             Log.i("Foreground dispatch", "Discovered tag with intent: " + intent);
+            if (!mAdapter.isEnabled()) {
+                my.nfcView.setText("NFC is disabled.");
+            } else {
+                my.nfcView.setText("NFC Enabled, Read NFC");
+            }
             my.nfcView.setText("Discovered tag " + ++my.mCount + " with intent: " + intent);
         }
         Log.d(TAG, "Do I get here 3?");
+        */
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -332,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_camera:
                 currentInput = "camera";
                 navright_Menu.findItem(R.id.nav_speaker).setVisible(false);
+
                 openOutput();
                 break;
             case R.id.nav_microphone:
@@ -474,7 +464,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } else if (currentInput.equals("gesture")) {
                             fragment = new GestureFragment();
                         } else if (currentInput.equals("nfc")) {
-                            Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                            //NfcInit();
+                            //fragment = new NFCReadFragment();
                         } else if (currentInput.equals("usb")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
                         }
@@ -584,32 +575,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void NfcInit() {
-        mAdapter = NfcAdapter.getDefaultAdapter(this);
 
+
+        /*
+        mAdapter = NfcAdapter.getDefaultAdapter(this);
+        Log.d(TAG, "1 NFC");
         if (mAdapter == null) {
             // Stop here, we definitely need NFC
             Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
         }
 
-        if (!mAdapter.isEnabled()) {
-            nfcView.setText("NFC is disabled.");
-        } else {
-            nfcView.setText("NFC Enabled, Read NFC");
-        }
         mPendingIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         // Setup an intent filter for all MIME based dispatches
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+        Log.d(TAG, "2 NFC");
         try {
-            ndef.addDataType("*/*");
+            ndef.addDataType("");
         } catch (IntentFilter.MalformedMimeTypeException e) {
             throw new RuntimeException("fail", e);
         }
+        Log.d(TAG, "3 NFC");
         mFilters = new IntentFilter[]{ndef,};
         // Setup a tech list for all NfcF tags
         mTechLists = new String[][]{new String[]{NfcF.class.getName(), NfcB.class.getName(), NfcA.class.getName(),
                 NfcV.class.getName(), IsoDep.class.getName(), Ndef.class.getName(),
                 NdefFormatable.class.getName(), MifareClassic.class.getName(),
                 MifareUltralight.class.getName()}};
+        Log.d(TAG, "4 NFC");
+        */
     }
+
+
+
 }

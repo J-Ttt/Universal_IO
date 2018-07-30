@@ -1,14 +1,16 @@
 package com.example.omistaja.universal_io.Fragments;
 
 
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 
@@ -23,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -31,6 +34,11 @@ import android.widget.Toast;
 import com.example.omistaja.universal_io.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,8 +124,44 @@ public class WifiP2pFragment extends Fragment {
             }
         });
 
+        wifilist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                {
+                    final WifiP2pDevice device = deviceArray[i];
+                    WifiP2pConfig config = new WifiP2pConfig();
+                    config.deviceAddress = device.deviceAddress;
+
+                    mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(_context, "Connected to " + device.deviceName, Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(int i) {
+                            Toast.makeText(_context, "Not connected", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+
         return rootView;
     }
+
+    WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
+        @Override
+        public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
+            final InetAddress groupOwnerAddress = wifiP2pInfo.groupOwnerAddress;
+
+            if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
+                Log.d(TAG, "Host");
+            } else if (wifiP2pInfo.groupFormed) {
+                Log.d(TAG, "Client");
+            }
+        }
+    };
 
     @Override
     public void onResume() {
@@ -162,7 +206,7 @@ public class WifiP2pFragment extends Fragment {
         });
     }
 
-    private void initialWork(){
+    private void initialWork() {
 
         mWifiManager = (WifiManager) _context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         mManager = (WifiP2pManager) _context.getSystemService(Context.WIFI_P2P_SERVICE);
@@ -186,14 +230,11 @@ public class WifiP2pFragment extends Fragment {
     }
 
 
-
-
-
-        WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
+    WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
         @Override
         public void onPeersAvailable(WifiP2pDeviceList peerList) {
 
-            if(!peerList.getDeviceList().equals(peers)){
+            if (!peerList.getDeviceList().equals(peers)) {
                 Log.d(TAG, Integer.toString(peerList.getDeviceList().toArray().length));
                 peers.addAll(peerList.getDeviceList());
                 Log.d(TAG, "Adding peers 1...");
@@ -220,7 +261,7 @@ public class WifiP2pFragment extends Fragment {
                 Log.d(TAG, "No devices available");
             }
         }
-        };
+    };
 
     private BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
         @Override
@@ -236,18 +277,64 @@ public class WifiP2pFragment extends Fragment {
                 }
 
             } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-                Log.d(TAG,"Do I get peers?");
+                Log.d(TAG, "Do I get peers?");
                 if (mManager != null) {
                     mManager.requestPeers(mChannel, peerListListener);
                     Log.d(TAG, "Yes I do");
-            } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+                } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
 
-            } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
+                    if (mManager == null) {
+                        return;
+                    }
 
-            } else if (WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION.equals(action)) {
+                    NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+
+                    if (networkInfo.isConnected()) {
+                        mManager.requestConnectionInfo(mChannel, connectionInfoListener);
+                    } else {
+                        Log.d(TAG, "Device disconnected");
+                    }
+
+                } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
+
+                } else if (WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION.equals(action)) {
 
                 }
             }
         }
     };
+
+    public class ServerClass extends Thread {
+        Socket socket;
+        ServerSocket serverSocket;
+
+        @Override
+        public void run() {
+            try {
+                serverSocket = new ServerSocket(8888);
+                socket = serverSocket.accept();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class ClientClass extends Thread {
+        Socket socket;
+        String hostAdd;
+
+        public ClientClass(InetAddress hostAddress) {
+            hostAdd = hostAddress.getHostAddress();
+            socket = new Socket();
+        }
+
+        @Override
+        public void run() {
+            try {
+                socket.connect(new InetSocketAddress(hostAdd, 8888),500);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

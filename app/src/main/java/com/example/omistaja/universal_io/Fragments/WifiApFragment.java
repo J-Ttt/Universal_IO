@@ -1,11 +1,13 @@
 package com.example.omistaja.universal_io.Fragments;
 
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
@@ -19,13 +21,18 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.omistaja.universal_io.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,14 +45,14 @@ public class WifiApFragment extends Fragment {
 
     private static final String TAG = "WifiApFragment";
     Context _context;
-    Button apscanbtn, wifiOnOff;
+    Button apscanbtn, wifiOnOff, apdisbtn;
     private ListView wifilist;
     private WifiManager mWifiManager;
     ArrayAdapter<String> arrayAdapter;
     ArrayList<String> arraylist = new ArrayList<>();
     private IntentFilter apIntentFilter;
     int size = 0;
-
+    EditText pass;
 
 
 
@@ -96,6 +103,7 @@ public class WifiApFragment extends Fragment {
         apscanbtn = rootView.findViewById(R.id.apscanbtn);
         wifiOnOff = rootView.findViewById(R.id.wifiOnOff);
         wifilist = rootView.findViewById(R.id.wifilist);
+        apdisbtn = rootView.findViewById(R.id.apdisbtn);
 
         initialWork();
 
@@ -110,6 +118,23 @@ public class WifiApFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 scanapwifi();
+            }
+        });
+
+        apdisbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mWifiManager.disconnect();
+                Toast.makeText(_context, "Disconnected from current AP", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        wifilist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String ssid = ((TextView) view).getText().toString();
+                connectToWifi(ssid);
+                Toast.makeText(_context, "Wifi SSID: " + ssid, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -189,4 +214,43 @@ public class WifiApFragment extends Fragment {
             }
         }
     };
+
+    private void finallyConnect(String networkPass, String networkSSID) {
+        WifiConfiguration wifiConfig = new WifiConfiguration();
+        wifiConfig.SSID = String.format("\"%s\"", networkSSID);
+        wifiConfig.preSharedKey = String.format("\"%s\"", networkPass);
+
+        // remember id
+        int netId = mWifiManager.addNetwork(wifiConfig);
+        mWifiManager.disconnect();
+        mWifiManager.enableNetwork(netId, true);
+        mWifiManager.reconnect();
+
+        WifiConfiguration conf = new WifiConfiguration();
+        conf.SSID = "\"\"" + networkSSID + "\"\"";
+        conf.preSharedKey = "\"" + networkPass + "\"";
+        mWifiManager.addNetwork(conf);
+    }
+
+    private void connectToWifi(final String wifiSSID) {
+        final Dialog dialog = new Dialog(_context);
+        dialog.setContentView(R.layout.connect);
+        dialog.setTitle("Connect to Network");
+        TextView textSSID = dialog.findViewById(R.id.textSSID1);
+
+        Button dialogButton = dialog.findViewById(R.id.okButton);
+        pass = dialog.findViewById(R.id.textPassword);
+        textSSID.setText(wifiSSID);
+
+        // if button is clicked, connect to the network;
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String checkPassword = pass.getText().toString();
+                finallyConnect(checkPassword, wifiSSID);
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
 }
