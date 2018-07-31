@@ -124,8 +124,11 @@ public class WifiApFragment extends Fragment {
         apdisbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int networkId = mWifiManager.getConnectionInfo().getNetworkId();
+                String ssid = mWifiManager.getConnectionInfo().getSSID();
                 mWifiManager.disconnect();
-                Toast.makeText(_context, "Disconnected from current AP", Toast.LENGTH_SHORT).show();
+                mWifiManager.removeNetwork(networkId);
+                Toast.makeText(_context, "Disconnected from " + ssid, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -158,6 +161,7 @@ public class WifiApFragment extends Fragment {
             mWifiManager.setWifiEnabled(false);
             wifiOnOff.setText("Enable WiFi");
             Log.d(TAG, "Disabling WiFi");
+            arraylist.clear();
         } else {
             mWifiManager.setWifiEnabled(true);
             wifiOnOff.setText("Disable WiFi");
@@ -236,7 +240,7 @@ public class WifiApFragment extends Fragment {
         final Dialog dialog = new Dialog(_context);
         dialog.setContentView(R.layout.connect);
         dialog.setTitle("Connect to Network");
-        TextView textSSID = dialog.findViewById(R.id.textSSID1);
+        final TextView textSSID = dialog.findViewById(R.id.textSSID1);
 
         Button dialogButton = dialog.findViewById(R.id.okButton);
         pass = dialog.findViewById(R.id.textPassword);
@@ -249,6 +253,7 @@ public class WifiApFragment extends Fragment {
                 String checkPassword = pass.getText().toString();
                 finallyConnect(checkPassword, wifiSSID);
                 dialog.dismiss();
+                Toast.makeText(_context, "Connected to " + wifiSSID, Toast.LENGTH_SHORT).show();
             }
         });
         dialog.show();

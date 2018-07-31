@@ -32,6 +32,7 @@ public class ShareFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_share, container, false);
 
 
+
         return rootView;
     }
 

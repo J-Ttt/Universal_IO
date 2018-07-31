@@ -19,7 +19,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    lintOptions {
+        disable 'RestrictedApi'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -29,6 +35,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0-alpha1'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
     implementation 'com.github.anshulagarwal06:PasswordEditText:v1.0'
+    implementation 'com.google.guava:guava:25.1-jre'
     implementation("com.mikepenz:materialdrawer:6.0.8@aar") {
         transitive = true
     }
