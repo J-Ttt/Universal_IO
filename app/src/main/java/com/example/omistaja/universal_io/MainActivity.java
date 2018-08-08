@@ -41,6 +41,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.ShareActionProvider;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.MenuItemCompat;
+import androidx.customview.widget.ViewDragHelper;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -52,6 +53,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.google.android.material.navigation.NavigationView;
@@ -61,6 +63,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 
 import android.view.Menu;
 import android.widget.LinearLayout;
@@ -69,6 +72,7 @@ import android.widget.Toast;
 
 import com.example.omistaja.universal_io.Fragments.HomeFragment;
 
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -91,8 +95,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final int RequestPermissionCode = 1;
     NavigationView navigationView;
     private String currentInput;
-
-
+    final SwipeDetector swipeDetector = new SwipeDetector();
 
 
 
@@ -105,19 +108,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         requestPermission();
         setRightItemsVisible();
 
+
         drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 /*
         expandableList = findViewById(R.id.navigationmenuRight);
 */
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
+        toggle.setDrawerIndicatorEnabled(false);
         toggle.syncState();
+
 
 
         initAll();
 
-
+/*
         leftDraw = findViewById(R.id.leftDraw);
         leftDraw.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     drawerLayout.openDrawer(GravityCompat.START);
                 }
             }
+
         });
 
 
@@ -139,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-
+*/
 /*
         prepareListData();
         mMenuAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild, expandableList);
@@ -161,11 +169,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 */
 
+
         NavigationView navigationView = findViewById(R.id.nav_view_left);
         navigationView.setNavigationItemSelectedListener(this);
 
         displayRight();
-
 
         //Pull method from Fragment to Activity
         //FragmentManager fm = getSupportFragmentManager();
@@ -180,25 +188,67 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ft.commit();
 
     }
-/*
-    NfcFragment fragment;
-    @Override
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
 
-        // Check if the fragment is an instance of the right fragment
-        if (fragment instanceof NfcFragment) {
-            Log.d(TAG, "Do I get here?!");
-            NfcFragment my = fragment;
-            // Pass intent or its data to the fragment's method
-            setIntent(intent);
-            my.resolveIntent(intent);
-            Log.d(TAG, "Yes I do, starting NFC intent");
-            //my.processNFC(intent.getStringExtra());
+    /*
+        NfcFragment fragment;
+        @Override
+        public void onNewIntent(Intent intent) {
+            super.onNewIntent(intent);
+
+            // Check if the fragment is an instance of the right fragment
+            if (fragment instanceof NfcFragment) {
+                Log.d(TAG, "Do I get here?!");
+                NfcFragment my = fragment;
+                // Pass intent or its data to the fragment's method
+                setIntent(intent);
+                my.resolveIntent(intent);
+                Log.d(TAG, "Yes I do, starting NFC intent");
+                //my.processNFC(intent.getStringExtra());
+            }
+
+        }
+    */
+
+    float startX, startY, endX, endY;
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        int action = ev.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                startX = ev.getX();
+                startY = ev.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                endX = ev.getX();
+                endY = ev.getY();
+
+                float sensitivity = 5;
+                // From left to right
+                if (endX - startX >= sensitivity) {
+                    if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+                        drawerLayout.closeDrawer(GravityCompat.END);
+                    } else {
+                        drawerLayout.openDrawer(GravityCompat.START);
+                    }
+                }
+
+                // From right to left
+                if (startX - endX >= sensitivity) {
+                    if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                    } else {
+                        drawerLayout.openDrawer(GravityCompat.END);
+                    }
+                }
+
+                break;
         }
 
+        return false;
     }
-*/
+
     public void onResume() {
         super.onResume();
         setRightItemsVisible();
@@ -273,9 +323,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        MenuItem shareItem = menu.findItem(R.id.menu_item_share);
-        ShareActionProvider myShareActionProvider =  (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+        //getMenuInflater().inflate(R.menu.main, menu);
+        //MenuItem shareItem = menu.findItem(R.id.menu_item_share);
+        //ShareActionProvider myShareActionProvider =  (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
         return true;
     }
 
@@ -288,10 +338,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
+        /*
         if (id == R.id.menu_item_share) {
             drawer.openDrawer(GravityCompat.END);
         }
-
+*/
         return super.onOptionsItemSelected(item);
     }
 
