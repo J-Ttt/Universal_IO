@@ -1,6 +1,7 @@
 package com.example.omistaja.universal_io.Fragments;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -21,6 +22,8 @@ import android.widget.TextView;
 
 import com.example.omistaja.universal_io.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,7 +69,7 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
             }
 
             if (fragment != null) {
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 ft.replace(R.id.content_frame, fragment);
                 ft.commit();
@@ -77,12 +80,13 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
     };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_accelerometer, container, false);
 
         BottomNavigationView p2pap = rootView.findViewById(R.id.bottomNavigationView3);
         p2pap.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
         sensorManager = (SensorManager) _context.getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
+        assert sensorManager != null;
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         accelX = rootView.findViewById(R.id.accelX);
@@ -112,6 +116,7 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         accelX.setText("X Value: " + sensorEvent.values[0]);

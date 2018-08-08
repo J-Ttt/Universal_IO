@@ -35,6 +35,7 @@ import com.example.omistaja.universal_io.R;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Objects;
 
 
 public class PhotoFragment extends Fragment {
@@ -77,7 +78,7 @@ public class PhotoFragment extends Fragment {
             }
 
             if (fragment != null) {
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 ft.replace(R.id.content_frame, fragment);
                 ft.commit();
@@ -89,7 +90,7 @@ public class PhotoFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.fragment_camera, container, false);
 
@@ -120,9 +121,10 @@ public class PhotoFragment extends Fragment {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
 
-                Bitmap bmp = (Bitmap) data.getExtras().get("data");
+                Bitmap bmp = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
+                assert bmp != null;
                 bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
 

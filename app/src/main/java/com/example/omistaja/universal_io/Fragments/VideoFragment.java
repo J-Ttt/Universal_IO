@@ -24,6 +24,8 @@ import android.widget.VideoView;
 
 import com.example.omistaja.universal_io.R;
 
+import java.util.Objects;
+
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
@@ -61,7 +63,7 @@ public class VideoFragment extends Fragment {
             }
 
             if (fragment != null) {
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 ft.replace(R.id.content_frame, fragment);
                 ft.commit();
@@ -72,7 +74,7 @@ public class VideoFragment extends Fragment {
     };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.fragment_camera2, container, false);
 

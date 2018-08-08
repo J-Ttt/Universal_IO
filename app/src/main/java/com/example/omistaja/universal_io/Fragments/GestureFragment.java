@@ -1,9 +1,11 @@
 package com.example.omistaja.universal_io.Fragments;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.Fragment;
 
@@ -33,7 +35,7 @@ public class GestureFragment extends Fragment implements GestureDetector.OnGestu
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_gesture, container, false);
 
 
@@ -42,6 +44,7 @@ public class GestureFragment extends Fragment implements GestureDetector.OnGestu
         gestureDetectorCompat.setOnDoubleTapListener(this);
 
         rootView.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 gestureDetectorCompat.onTouchEvent(motionEvent);

@@ -14,12 +14,15 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 
+import afu.org.checkerframework.checker.oigj.qual.O;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -28,27 +31,34 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.omistaja.universal_io.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class WifiP2pFragment extends Fragment {
 
     private Context _context;
     private static final String TAG = "WifiP2pFragment";
-    private Button p2pscanbtn, wifiOnOff;
+    private Button p2pscanbtn, wifiOnOff, sendbtn2;
     private ListView wifilist;
+    private EditText writemsg2;
+    private TextView msgview2, status2;
     private WifiManager mWifiManager;
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
@@ -57,6 +67,12 @@ public class WifiP2pFragment extends Fragment {
     private List<WifiP2pDevice> peers = new ArrayList<>();
     String[] deviceNameArray;
     WifiP2pDevice[] deviceArray;
+
+    static final int MESSAGE_READ = 1;
+
+    ServerClass serverClass;
+    ClientClass clientClass;
+    SendReceive sendReceive;
 
     public WifiP2pFragment() {
 
@@ -84,7 +100,7 @@ public class WifiP2pFragment extends Fragment {
             }
 
             if (fragment != null) {
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 ft.replace(R.id.content_frame, fragment);
                 ft.commit();
@@ -95,7 +111,7 @@ public class WifiP2pFragment extends Fragment {
     };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_wifi, container, false);
 
         BottomNavigationView p2pap = rootView.findViewById(R.id.bottomNavigationView2);
@@ -104,10 +120,20 @@ public class WifiP2pFragment extends Fragment {
         p2pscanbtn = rootView.findViewById(R.id.p2pscanbtn);
         wifiOnOff = rootView.findViewById(R.id.wifiOnOff);
         wifilist = rootView.findViewById(R.id.wifilist);
+        msgview2 = rootView.findViewById(R.id.msgview2);
+        writemsg2 = rootView.findViewById(R.id.writemsg2);
+        sendbtn2 = rootView.findViewById(R.id.sendbtn2);
+        status2 = rootView.findViewById(R.id.status2);
 
         initialWork();
-        _context.registerReceiver(wifiReceiver, mIntentFilter);
+        initButtons();
 
+
+
+        return rootView;
+    }
+
+    private void initButtons() {
         p2pscanbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,7 +173,13 @@ public class WifiP2pFragment extends Fragment {
             }
         });
 
-        return rootView;
+        sendbtn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String msg = writemsg2.getText().toString();
+                sendReceive.write(msg.getBytes());
+            }
+        });
     }
 
     WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
@@ -156,9 +188,13 @@ public class WifiP2pFragment extends Fragment {
             final InetAddress groupOwnerAddress = wifiP2pInfo.groupOwnerAddress;
 
             if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
-                Log.d(TAG, "Host");
+                status2.setText("Host");
+                serverClass = new ServerClass();
+                serverClass.start();
             } else if (wifiP2pInfo.groupFormed) {
-                Log.d(TAG, "Client");
+                status2.setText("Client");
+                clientClass = new ClientClass(groupOwnerAddress);
+                clientClass.start();
             }
         }
     };
@@ -195,13 +231,12 @@ public class WifiP2pFragment extends Fragment {
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-
-                Log.d(TAG, "Success discovery");
+                status2.setText("Discovery Success");
             }
 
             @Override
             public void onFailure(int i) {
-                Log.d(TAG, "Failed discovery");
+                status2.setText("Discovery Failed");
             }
         });
     }
@@ -227,7 +262,24 @@ public class WifiP2pFragment extends Fragment {
             mWifiManager.setWifiEnabled(true);
             wifiOnOff.setText("Disable WiFi");
         }
+        _context.registerReceiver(wifiReceiver, mIntentFilter);
     }
+
+    Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+
+            switch (msg.what) {
+                case MESSAGE_READ:
+                    byte[] readBuff = (byte[]) msg.obj;
+                    String tempMsg = new String(readBuff, 0, msg.arg1);
+                    msgview2.setText(tempMsg);
+                    break;
+            }
+
+            return true;
+        }
+    });
 
 
     WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
@@ -271,9 +323,9 @@ public class WifiP2pFragment extends Fragment {
             if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
                 final int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
                 if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
-                    Toast.makeText(getContext(), "WiFi is disabled", Toast.LENGTH_SHORT).show();
-                } else {
                     Toast.makeText(getContext(), "WiFi is enabled", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "WiFi is disabled", Toast.LENGTH_SHORT).show();
                 }
 
             } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
@@ -292,7 +344,7 @@ public class WifiP2pFragment extends Fragment {
                     if (networkInfo.isConnected()) {
                         mManager.requestConnectionInfo(mChannel, connectionInfoListener);
                     } else {
-                        Log.d(TAG, "Device disconnected");
+                        status2.setText("Disconnected");
                     }
 
                 } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
@@ -313,10 +365,62 @@ public class WifiP2pFragment extends Fragment {
             try {
                 serverSocket = new ServerSocket(8888);
                 socket = serverSocket.accept();
+
+                sendReceive = new SendReceive(socket);
+                sendReceive.start();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private class SendReceive extends Thread {
+        private Socket socket;
+        private InputStream inputStream;
+        private OutputStream outputStream;
+
+        public SendReceive(Socket soc) {
+            socket = soc;
+            InputStream tempIn = null;
+            OutputStream tempOut = null;
+
+            try {
+                tempIn = socket.getInputStream();
+                tempOut = socket.getOutputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            inputStream = tempIn;
+            outputStream = tempOut;
+        }
+
+        @Override
+        public void run() {
+            byte[] buffer = new byte[1024];
+            int bytes;
+
+            while (socket != null) {
+                try {
+                    bytes = inputStream.read(buffer);
+                    if (bytes >0) {
+                        handler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void write(byte[] bytes) {
+            try {
+                outputStream.write(bytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public class ClientClass extends Thread {
@@ -332,6 +436,10 @@ public class WifiP2pFragment extends Fragment {
         public void run() {
             try {
                 socket.connect(new InetSocketAddress(hostAdd, 8888),500);
+
+                sendReceive = new SendReceive(socket);
+                sendReceive.start();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

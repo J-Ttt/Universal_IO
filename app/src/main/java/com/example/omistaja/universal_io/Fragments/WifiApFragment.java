@@ -37,6 +37,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,7 +83,7 @@ public class WifiApFragment extends Fragment {
             }
 
             if (fragment != null) {
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 ft.replace(R.id.content_frame, fragment);
                 ft.commit();
@@ -94,7 +95,7 @@ public class WifiApFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
       final View rootView = inflater.inflate(R.layout.fragment_wifi_ap, container, false);
 
       BottomNavigationView p2pap = rootView.findViewById(R.id.bottomNavigationView2);
@@ -106,7 +107,19 @@ public class WifiApFragment extends Fragment {
         apdisbtn = rootView.findViewById(R.id.apdisbtn);
 
         initialWork();
+        initButtons();
 
+      return rootView;
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        _context.registerReceiver(wifiReceiver, apIntentFilter);
+    }
+
+    private void initButtons() {
         wifiOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,17 +153,6 @@ public class WifiApFragment extends Fragment {
                 Toast.makeText(_context, "Wifi SSID: " + ssid, Toast.LENGTH_SHORT).show();
             }
         });
-
-        arrayAdapter = new ArrayAdapter<>(_context, android.R.layout.simple_list_item_1, arraylist);
-        wifilist.setAdapter(arrayAdapter);
-
-      return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        _context.registerReceiver(wifiReceiver, apIntentFilter);
     }
 
     private void enableWifi() {
@@ -191,6 +193,8 @@ public class WifiApFragment extends Fragment {
             mWifiManager.setWifiEnabled(true);
             wifiOnOff.setText("Disable WiFi");
         }
+        arrayAdapter = new ArrayAdapter<>(_context, android.R.layout.simple_list_item_1, arraylist);
+        wifilist.setAdapter(arrayAdapter);
     }
 
     private BroadcastReceiver wifiReceiver = new BroadcastReceiver() {

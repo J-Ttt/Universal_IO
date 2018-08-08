@@ -26,17 +26,21 @@ import android.os.Bundle;
 
 import com.example.omistaja.universal_io.Fragments.AccelerometerFragment;
 import com.example.omistaja.universal_io.Fragments.BluetoothFragment;
+import com.example.omistaja.universal_io.Fragments.BluetoothSpeakerFragment;
 import com.example.omistaja.universal_io.Fragments.GestureFragment;
 import com.example.omistaja.universal_io.Fragments.MicrophoneFragment;
 import com.example.omistaja.universal_io.Fragments.NfcFragment;
 import com.example.omistaja.universal_io.Fragments.PhotoFragment;
+import com.example.omistaja.universal_io.Fragments.UsbFragment;
 import com.example.omistaja.universal_io.Fragments.WifiP2pFragment;
 import com.example.omistaja.universal_io.NFC.NdefMessageParser;
 import com.example.omistaja.universal_io.NFC.ParsedNdefRecord;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.ShareActionProvider;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -47,6 +51,7 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.material.navigation.NavigationView;
@@ -58,7 +63,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -269,8 +273,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem shareItem = menu.findItem(R.id.menu_item_share);
+        ShareActionProvider myShareActionProvider =  (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
         return true;
     }
 
@@ -283,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.menu_item_share) {
             drawer.openDrawer(GravityCompat.END);
         }
 
@@ -306,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case RequestPermissionCode:
                 if (grantResults.length > 0) {
@@ -352,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_camera:
                 currentInput = "camera";
                 navright_Menu.findItem(R.id.nav_speaker).setVisible(false);
-
+                navright_Menu.findItem(R.id.nav_nfc).setVisible(false);
                 openOutput();
                 break;
             case R.id.nav_microphone:
@@ -454,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (currentInput.equals("microphone")) {
                             fragment = new MicrophoneFragment();
                         } else if (currentInput.equals("bluetooth")) {
-                            Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                            fragment = new BluetoothSpeakerFragment();
                         } else if (currentInput.equals("wifi")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
                         }
@@ -497,6 +502,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } else if (currentInput.equals("nfc")) {
                             Intent intent = new Intent(MainActivity.this, NfcFragment.class);
                             startActivity(intent);
+                        } else if (currentInput.equals("usb")) {
+                            fragment = new UsbFragment();
+                        }
+                        break;
+                    case R.id.nav_share:
+                        if (currentInput.equals("camera")) {
+                            Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        } else if (currentInput.equals("microphone")) {
+                            Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        } else if (currentInput.equals("bluetooth")) {
+                            Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        } else if (currentInput.equals("wifi")) {
+                            Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        } else if (currentInput.equals("sensor")) {
+                            Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        } else if (currentInput.equals("gesture")) {
+                            Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        } else if (currentInput.equals("nfc")) {
+                            Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
                         } else if (currentInput.equals("usb")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
                         }

@@ -1,6 +1,7 @@
 package com.example.omistaja.universal_io.Fragments;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -24,6 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Objects;
 
 
 public class MagnometerFragment extends Fragment implements SensorEventListener {
@@ -70,7 +72,7 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
             }
 
             if (fragment != null) {
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 ft.replace(R.id.content_frame, fragment);
                 ft.commit();
@@ -81,12 +83,13 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
     };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_magnometer, container, false);
 
         BottomNavigationView p2pap = rootView.findViewById(R.id.bottomNavigationView3);
         p2pap.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
         sensorManager = (SensorManager) _context.getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
+        assert sensorManager != null;
         magnoMeter = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         accelMeter = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
@@ -112,6 +115,7 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER)

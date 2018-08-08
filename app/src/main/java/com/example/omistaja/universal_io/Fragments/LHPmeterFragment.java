@@ -22,6 +22,8 @@ import android.widget.TextView;
 import com.example.omistaja.universal_io.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.Objects;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -42,7 +44,7 @@ public class LHPmeterFragment extends Fragment implements SensorEventListener {
         _context = context;
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+    private final BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Fragment fragment = null;
@@ -66,7 +68,7 @@ public class LHPmeterFragment extends Fragment implements SensorEventListener {
             }
 
             if (fragment != null) {
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 ft.replace(R.id.content_frame, fragment);
                 ft.commit();
@@ -126,6 +128,7 @@ public class LHPmeterFragment extends Fragment implements SensorEventListener {
     private void initialWork() {
         sensorManager = (SensorManager) _context.getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
 
+        assert sensorManager != null;
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         if (lightSensor != null) {
             sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
