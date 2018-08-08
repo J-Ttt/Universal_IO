@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
     private String currentInput;
     final SwipeDetector swipeDetector = new SwipeDetector();
+    float startX, startY, endX, endY;
 
 
 
@@ -109,8 +110,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setRightItemsVisible();
 
 
+
         drawerLayout = findViewById(R.id.drawer_layout);
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 /*
         expandableList = findViewById(R.id.navigationmenuRight);
 */
@@ -118,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.setDrawerIndicatorEnabled(false);
+        increaseSwipeEdgeOfDrawer(drawerLayout);
         toggle.syncState();
 
 
@@ -172,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = findViewById(R.id.nav_view_left);
         navigationView.setNavigationItemSelectedListener(this);
-
         displayRight();
 
         //Pull method from Fragment to Activity
@@ -208,51 +209,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
     */
+    
+    public static void increaseSwipeEdgeOfDrawer(DrawerLayout drawerLayoutDrawer) {
+        try {
 
-    float startX, startY, endX, endY;
+            Field mDragger = drawerLayoutDrawer.getClass().getDeclaredField("mLeftDragger");//mRightDragger or mLeftDragger based on Drawer Gravity
+            mDragger.setAccessible(true);
+            ViewDragHelper draggerObj = (ViewDragHelper) mDragger.get(drawerLayoutDrawer);
 
+            Field mEdgeSize = draggerObj.getClass().getDeclaredField("mEdgeSize");
+            mEdgeSize.setAccessible(true);
+            int edge = mEdgeSize.getInt(draggerObj);
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        int action = ev.getAction();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                startX = ev.getX();
-                startY = ev.getY();
-                break;
-            case MotionEvent.ACTION_UP:
-                endX = ev.getX();
-                endY = ev.getY();
+            mEdgeSize.setInt(draggerObj, 1080);
 
-                float sensitivity = 5;
-                // From left to right
-                if (endX - startX >= sensitivity) {
-                    if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
-                        drawerLayout.closeDrawer(GravityCompat.END);
-                    } else {
-                        drawerLayout.openDrawer(GravityCompat.START);
-                    }
-                }
+            Field mDragger2 = drawerLayoutDrawer.getClass().getDeclaredField("mRightDragger");//mRightDragger or mLeftDragger based on Drawer Gravity
+            mDragger2.setAccessible(true);
+            ViewDragHelper draggerObj2 = (ViewDragHelper) mDragger2.get(drawerLayoutDrawer);
 
-                // From right to left
-                if (startX - endX >= sensitivity) {
-                    if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                    } else {
-                        drawerLayout.openDrawer(GravityCompat.END);
-                    }
-                }
+            Field mEdgeSize2 = draggerObj2.getClass().getDeclaredField("mEdgeSize");
+            mEdgeSize2.setAccessible(true);
+            int edge2 = mEdgeSize2.getInt(draggerObj2);
 
-                break;
+            mEdgeSize2.setInt(draggerObj2, -500);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        return false;
     }
 
     public void onResume() {
         super.onResume();
         setRightItemsVisible();
-        setleftItemsInvisible();
+        setLeftItemsInvisible();
     }
 
     public void onStop() {
@@ -619,10 +607,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initAll() {
-        setleftItemsInvisible();
+        setLeftItemsInvisible();
     }
 
-    private void setleftItemsInvisible() {
+    private void setLeftItemsInvisible() {
         navigationView = findViewById(R.id.nav_view_left);
         Menu navleft_Menu = navigationView.getMenu();
         if (!hasCamera()) {

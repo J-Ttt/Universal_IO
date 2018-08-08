@@ -436,7 +436,6 @@ public class WifiP2pFragment extends Fragment {
         public void run() {
             try {
                 socket.connect(new InetSocketAddress(hostAdd, 8888),500);
-
                 sendReceive = new SendReceive(socket);
                 sendReceive.start();
 
