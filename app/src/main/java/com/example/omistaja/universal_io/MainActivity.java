@@ -94,9 +94,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     public static final int RequestPermissionCode = 1;
     NavigationView navigationView;
-    private String currentInput;
-
-
+    private String currentInput, currentOutput;
+    Fragment fragment = null;
 
 
     @Override
@@ -109,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setRightItemsVisible();
 
 
-
         drawerLayout = findViewById(R.id.drawer_layout);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -118,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.setDrawerIndicatorEnabled(false);
         increaseSwipeEdgeOfDrawer(drawerLayout);
         toggle.syncState();
-
 
 
         initAll();
@@ -399,43 +396,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (id) {
             case R.id.nav_camera:
-                currentInput = "camera";
+                currentInput = "Camera";
                 navright_Menu.findItem(R.id.nav_speaker).setVisible(false);
                 navright_Menu.findItem(R.id.nav_nfc).setVisible(false);
                 openOutput();
                 break;
             case R.id.nav_microphone:
-                currentInput = "microphone";
+                currentInput = "Microphone";
                 navright_Menu.findItem(R.id.nav_nfc).setVisible(false);
                 openOutput();
                 break;
             case R.id.nav_bluetooth:
-                currentInput = "bluetooth";
+                currentInput = "Bluetooth";
                 navright_Menu.findItem(R.id.nav_nfc).setVisible(false);
                 navright_Menu.findItem(R.id.nav_wifi2).setVisible(false);
                 navright_Menu.findItem(R.id.nav_usb).setVisible(false);
                 openOutput();
                 break;
             case R.id.nav_wifi:
-                currentInput = "wifi";
+                currentInput = "WiFi";
                 navright_Menu.findItem(R.id.nav_nfc).setVisible(false);
                 navright_Menu.findItem(R.id.nav_bluetooth2).setVisible(false);
                 navright_Menu.findItem(R.id.nav_usb).setVisible(false);
                 openOutput();
                 break;
             case R.id.nav_sensor:
-                currentInput = "sensor";
+                currentInput = "Sensors";
                 navright_Menu.findItem(R.id.nav_speaker).setVisible(false);
                 openOutput();
                 break;
             case R.id.nav_gesture:
-                currentInput = "gesture";
+                currentInput = "Gesture";
                 navright_Menu.findItem(R.id.nav_nfc).setVisible(false);
                 navright_Menu.findItem(R.id.nav_speaker).setVisible(false);
                 openOutput();
                 break;
             case R.id.nav_nfc:
-                currentInput = "nfc";
+                currentInput = "NFC";
                 navright_Menu.findItem(R.id.nav_speaker).setVisible(false);
                 navright_Menu.findItem(R.id.nav_wifi2).setVisible(false);
                 navright_Menu.findItem(R.id.nav_usb).setVisible(false);
@@ -443,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 openOutput();
                 break;
             case R.id.nav_usb:
-                currentInput = "usb";
+                currentInput = "USB";
                 navright_Menu.findItem(R.id.nav_speaker).setVisible(false);
                 navright_Menu.findItem(R.id.nav_wifi2).setVisible(false);
                 navright_Menu.findItem(R.id.nav_nfc).setVisible(false);
@@ -464,112 +461,280 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 // Handle navigation view item clicks here.
 
+                AlertDialog.Builder inputOutput = new AlertDialog.Builder(MainActivity.this);
 
-                Fragment fragment = null;
+
                 int id = item.getItemId();
+
+                if (fragment != null) {
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                    ft.replace(R.id.content_frame, fragment);
+                    ft.commit();
+                }
 
                 switch (id) {
                     case R.id.nav_wifi2:
-                        if (currentInput.equals("camera")) {
+                        currentOutput = "WiFi";
+                        if (currentInput.equals("Camera")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("microphone")) {
+                        } else if (currentInput.equals("Microphone")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("bluetooth")) {
+                        } else if (currentInput.equals("Bluetooth")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("wifi")) {
+                        } else if (currentInput.equals("WiFi")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("sensors")) {
+                        } else if (currentInput.equals("Sensors")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("gesture")) {
+                        } else if (currentInput.equals("Gesture")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case R.id.nav_bluetooth2:
-                        if (currentInput.equals("camera")) {
+                        currentOutput = "Bluetooth";
+                        if (currentInput.equals("Camera")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("microphone")) {
+                        } else if (currentInput.equals("Microphone")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("bluetooth")) {
+                        } else if (currentInput.equals("Bluetooth")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("sensors")) {
+                        } else if (currentInput.equals("Sensors")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("gesture")) {
+                        } else if (currentInput.equals("Gesture")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("usb")) {
+                        } else if (currentInput.equals("USB")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case R.id.nav_speaker:
-                        if (currentInput.equals("microphone")) {
-                            fragment = new MicrophoneFragment();
-                        } else if (currentInput.equals("bluetooth")) {
-                            fragment = new BluetoothSpeakerFragment();
-                        } else if (currentInput.equals("wifi")) {
+                        currentOutput = "Speaker";
+                        if (currentInput.equals("Microphone")) {
+                            inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            fragment = new MicrophoneFragment();
+                                            FragmentManager fragmentManager = getSupportFragmentManager();
+                                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                                            ft.replace(R.id.content_frame, fragment);
+                                            ft.commit();
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.cancel();
+                                        }
+                                    });
+                            AlertDialog alertDialog = inputOutput.create();
+                            alertDialog.setTitle("Are you sure?");
+                            alertDialog.show();
+                        } else if (currentInput.equals("Bluetooth")) {
+                            inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            fragment = new BluetoothSpeakerFragment();
+                                            FragmentManager fragmentManager = getSupportFragmentManager();
+                                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                                            ft.replace(R.id.content_frame, fragment);
+                                            ft.commit();
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.cancel();
+                                        }
+                                    });
+                            AlertDialog alertDialog = inputOutput.create();
+                            alertDialog.setTitle("Are you sure?");
+                            alertDialog.show();
+                        } else if (currentInput.equals("WiFi")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case R.id.nav_nfc:
-                        if (currentInput.equals("camera")) {
+                        currentOutput = "NFC";
+                        if (currentInput.equals("Camera")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("sensors")) {
+                        } else if (currentInput.equals("Sensors")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("nfc")) {
+                        } else if (currentInput.equals("NFC")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case R.id.nav_usb:
-                        if (currentInput.equals("camera")) {
+                        currentOutput = "USB";
+                        if (currentInput.equals("Camera")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("microphone")) {
+                        } else if (currentInput.equals("Microphone")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("sensors")) {
+                        } else if (currentInput.equals("Sensors")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("gesture")) {
+                        } else if (currentInput.equals("Gesture")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("usb")) {
+                        } else if (currentInput.equals("USB")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case R.id.nav_screen:
-                        if (currentInput.equals("camera")) {
-                            fragment = new PhotoFragment();
-                        } else if (currentInput.equals("microphone")) {
+                        currentOutput = "Screen";
+                        if (currentInput.equals("Camera")) {
+                            inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            fragment = new PhotoFragment();
+                                            FragmentManager fragmentManager = getSupportFragmentManager();
+                                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                                            ft.replace(R.id.content_frame, fragment);
+                                            ft.commit();
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.cancel();
+                                        }
+                                    });
+                            AlertDialog alertDialog = inputOutput.create();
+                            alertDialog.setTitle("Are you sure?");
+                            alertDialog.show();
+                        } else if (currentInput.equals("Microphone")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("bluetooth")) {
-                            fragment = new BluetoothFragment();
-                        } else if (currentInput.equals("wifi")) {
-                            fragment = new WifiP2pFragment();
-                        } else if (currentInput.equals("sensor")) {
-                            fragment = new AccelerometerFragment();
-                        } else if (currentInput.equals("gesture")) {
-                            fragment = new GestureFragment();
-                        } else if (currentInput.equals("nfc")) {
+                        } else if (currentInput.equals("Bluetooth")) {
+                            inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            fragment = new BluetoothFragment();
+                                            FragmentManager fragmentManager = getSupportFragmentManager();
+                                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                                            ft.replace(R.id.content_frame, fragment);
+                                            ft.commit();
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.cancel();
+                                        }
+                                    });
+                            AlertDialog alertDialog = inputOutput.create();
+                            alertDialog.setTitle("Are you sure?");
+                            alertDialog.show();
+                        } else if (currentInput.equals("WiFi")) {
+                            inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            fragment = new WifiP2pFragment();
+                                            FragmentManager fragmentManager = getSupportFragmentManager();
+                                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                                            ft.replace(R.id.content_frame, fragment);
+                                            ft.commit();
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.cancel();
+                                        }
+                                    });
+                            AlertDialog alertDialog = inputOutput.create();
+                            alertDialog.setTitle("Are you sure?");
+                            alertDialog.show();
+                        } else if (currentInput.equals("Sensors")) {
+                            inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            fragment = new AccelerometerFragment();
+                                            FragmentManager fragmentManager = getSupportFragmentManager();
+                                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                                            ft.replace(R.id.content_frame, fragment);
+                                            ft.commit();
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.cancel();
+                                        }
+                                    });
+                            AlertDialog alertDialog = inputOutput.create();
+                            alertDialog.setTitle("Are you sure?");
+                            alertDialog.show();
+                        } else if (currentInput.equals("Gesture")) {
+                            inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            fragment = new GestureFragment();
+                                            FragmentManager fragmentManager = getSupportFragmentManager();
+                                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                                            ft.replace(R.id.content_frame, fragment);
+                                            ft.commit();
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.cancel();
+                                        }
+                                    });
+                            AlertDialog alertDialog = inputOutput.create();
+                            alertDialog.setTitle("Are you sure?");
+                            alertDialog.show();
+                        } else if (currentInput.equals("NFC")) {
                             Intent intent = new Intent(MainActivity.this, NfcFragment.class);
                             startActivity(intent);
-                        } else if (currentInput.equals("usb")) {
-                            fragment = new UsbFragment();
+                        } else if (currentInput.equals("USB")) {
+                            inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            fragment = new UsbFragment();
+                                            FragmentManager fragmentManager = getSupportFragmentManager();
+                                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                                            ft.replace(R.id.content_frame, fragment);
+                                            ft.commit();
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.cancel();
+                                        }
+                                    });
+                            AlertDialog alertDialog = inputOutput.create();
+                            alertDialog.setTitle("Are you sure?");
+                            alertDialog.show();
                         }
                         break;
                     case R.id.nav_share:
-                        if (currentInput.equals("camera")) {
+                        currentOutput = "Share";
+                        if (currentInput.equals("Camera")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("microphone")) {
+                        } else if (currentInput.equals("Microphone")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("bluetooth")) {
+                        } else if (currentInput.equals("Bluetooth")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("wifi")) {
+                        } else if (currentInput.equals("WiFi")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("sensor")) {
+                        } else if (currentInput.equals("Sensors")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("gesture")) {
+                        } else if (currentInput.equals("Gesture")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("nfc")) {
+                        } else if (currentInput.equals("NFC")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
-                        } else if (currentInput.equals("usb")) {
+                        } else if (currentInput.equals("USB")) {
                             Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
                         }
                         break;
                 }
+
 
                 if (fragment != null) {
                     FragmentManager fragmentManager = getSupportFragmentManager();
