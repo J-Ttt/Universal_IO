@@ -8,6 +8,28 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/rightDraw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="224dp"
+        android:layout_marginTop="36dp"
+        android:clickable="true"
+        app:layout_constraintStart_toEndOf="@+id/leftDraw"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/leftDraw"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="36dp"
+        android:clickable="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
     <FrameLayout
 
         android:id="@+id/content_frame"
@@ -19,6 +41,8 @@
         app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

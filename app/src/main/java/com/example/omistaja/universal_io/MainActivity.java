@@ -51,6 +51,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -71,6 +72,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.omistaja.universal_io.Fragments.HomeFragment;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.ExpandableDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -96,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
     private String currentInput, currentOutput;
     Fragment fragment = null;
+    Drawer result = null;
+    Drawer resultAppended = null;
 
 
     @Override
@@ -106,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         requestPermission();
         setRightItemsVisible();
+        drawerBuild();
 
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -113,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
+
+
         toggle.setDrawerIndicatorEnabled(false);
         increaseSwipeEdgeOfDrawer(drawerLayout);
         toggle.syncState();
@@ -124,50 +136,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         expandableList = findViewById(R.id.navigationmenuRight);
 */
 
-/*
+        // To open new test input drawer
         leftDraw = findViewById(R.id.leftDraw);
         leftDraw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setRightItemsVisible();
-                if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.openDrawer(GravityCompat.START);
-                }
+                result.openDrawer();
             }
 
         });
 
-
+        // To open new test output drawer
         rightDraw = findViewById(R.id.rightDraw);
         rightDraw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!drawerLayout.isDrawerOpen(GravityCompat.END)) {
-                    drawerLayout.openDrawer(GravityCompat.END);
-                }
+                resultAppended.openDrawer();
             }
         });
-*/
-/*
-        prepareListData();
-        mMenuAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild, expandableList);
-        expandableList.setAdapter(mMenuAdapter);
-
-        expandableList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
-                //Log.d("DEBUG", "submenu item clicked");
-                return false;
-            }
-        });
-        expandableList.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
-                //Log.d("DEBUG", "heading clicked");
-                return false;
-            }
-        });
-*/
 
 
         NavigationView navigationView = findViewById(R.id.nav_view_left);
@@ -209,6 +196,251 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
     */
+
+    //POSSIBLE CHANGE TO THIS DRAWERBUILD BY MIKE PENZ
+
+    public void drawerBuild() {
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+        AlertDialog.Builder inputOutput = new AlertDialog.Builder(MainActivity.this);
+
+        //Input Drawer
+        result = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withFireOnInitialOnClick(false)
+                .withHeader(R.layout.nav_header_main)
+                .addDrawerItems(
+                        new ExpandableDrawerItem().withName("Camera").withIcon(R.drawable.ic_photo_camera).withSubItems(
+                                new SecondaryDrawerItem().withName("Photo").withIcon(R.drawable.ic_photo_camera).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                                    @Override
+                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        currentInput = "Camera";
+                                        openOutput();
+                                        return false;
+                                    }
+                                }),
+                                new SecondaryDrawerItem().withName("Video").withIcon(R.drawable.ic_videocam).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                                    @Override
+                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        currentInput = "Video";
+                                        openOutput();
+                                        return false;
+                                    }
+                                })
+                        ),
+                        new PrimaryDrawerItem().withName("Microphone").withIcon(R.drawable.ic_mic).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                currentInput = "Microphone";
+                                openOutput();
+                                return false;
+                            }
+                        }),
+                        new PrimaryDrawerItem().withName("Bluetooth").withIcon(R.drawable.ic_bluetooth).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                currentInput = "Bluetooth";
+                                openOutput();
+                                return false;
+                            }
+                        }),
+                        new PrimaryDrawerItem().withName("WiFi").withIcon(R.drawable.ic_wifi).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                currentInput = "WiFi";
+                                openOutput();
+                                return false;
+                            }
+                        }),
+                        new ExpandableDrawerItem().withName("Sensors").withIcon(R.drawable.ic_sensor).withSubItems(
+                                new SecondaryDrawerItem().withName("Accelerometer").withIcon(R.drawable.ic_accelerometer).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                                    @Override
+                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        currentInput = "Accelerometer";
+                                        openOutput();
+                                        return false;
+                                    }
+                                }),
+                                new SecondaryDrawerItem().withName("Gyroscope").withIcon(R.drawable.ic_gyroscope).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                                    @Override
+                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        currentInput = "Gyroscope";
+                                        openOutput();
+                                        return false;
+                                    }
+                                }),
+                                new SecondaryDrawerItem().withName("Magnetometer").withIcon(R.drawable.ic_magneto).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                                    @Override
+                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        currentInput = "Magnetometer";
+                                        openOutput();
+                                        return false;
+                                    }
+                                }),
+                                new SecondaryDrawerItem().withName("Misc Sensors").withIcon(R.drawable.ic_magneto).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                                    @Override
+                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                        currentInput = "Misc Sensors";
+                                        openOutput();
+                                        return false;
+                                    }
+                                })
+                        ),
+                        new PrimaryDrawerItem().withName("Gesture").withIcon(R.drawable.ic_touch).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                currentInput = "Gesture";
+                                openOutput();
+                                return false;
+                            }
+                        }),
+                        new PrimaryDrawerItem().withName("NFC").withIcon(R.drawable.ic_nfc).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                currentInput = "NFC";
+                                openOutput();
+                                return false;
+                            }
+                        }),
+                        new PrimaryDrawerItem().withName("USB").withIcon(R.drawable.ic_usb).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                currentInput = "USB";
+                                openOutput();
+                                return false;
+                            }
+                        })
+                ).build();
+
+        //Output Drawer
+        resultAppended = new DrawerBuilder()
+                .withActivity(this)
+                .withHeader(R.layout.nav_header_main2)
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName("WiFi").withIcon(R.drawable.ic_wifi).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                currentOutput = "WiFi";
+                                if (currentInput.equals("Camera")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                } else if (currentInput.equals("Microphone")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                } else if (currentInput.equals("Bluetooth")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                } else if (currentInput.equals("WiFi")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                } else if (currentInput.equals("Sensors")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                } else if (currentInput.equals("Gesture")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                }
+                                return false;
+                            }
+                        }),
+                        new PrimaryDrawerItem().withName("Bluetooth").withIcon(R.drawable.ic_bluetooth).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                currentOutput = "Bluetoooth";
+                                if (currentInput.equals("Camera")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                } else if (currentInput.equals("Microphone")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                } else if (currentInput.equals("Bluetooth")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                } else if (currentInput.equals("Sensors")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                } else if (currentInput.equals("Gesture")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                } else if (currentInput.equals("USB")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                }
+                                return false;
+                            }
+                        }),
+                        new PrimaryDrawerItem().withName("Speaker").withIcon(R.drawable.ic_speaker).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                currentOutput = "Speaker";
+                                if (currentInput.equals("Microphone")) {
+                                    inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    fragment = new MicrophoneFragment();
+                                                    FragmentManager fragmentManager = getSupportFragmentManager();
+                                                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                                                    ft.replace(R.id.content_frame, fragment);
+                                                    ft.commit();
+                                                }
+                                            })
+                                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    dialogInterface.cancel();
+                                                }
+                                            });
+                                    AlertDialog alertDialog = inputOutput.create();
+                                    alertDialog.setTitle("Are you sure?");
+                                    alertDialog.show();
+                                } else if (currentInput.equals("Bluetooth")) {
+                                    inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    fragment = new BluetoothSpeakerFragment();
+                                                    FragmentManager fragmentManager = getSupportFragmentManager();
+                                                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                                                    ft.replace(R.id.content_frame, fragment);
+                                                    ft.commit();
+                                                }
+                                            })
+                                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    dialogInterface.cancel();
+                                                }
+                                            });
+                                    AlertDialog alertDialog = inputOutput.create();
+                                    alertDialog.setTitle("Are you sure?");
+                                    alertDialog.show();
+                                } else if (currentInput.equals("WiFi")) {
+                                    Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                                }
+                                return false;
+                            }
+                        }),
+                        new PrimaryDrawerItem().withName("NFC").withIcon(R.drawable.ic_nfc).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                return false;
+                            }
+                        }),
+                        new PrimaryDrawerItem().withName("USB").withIcon(R.drawable.ic_usb).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                return false;
+                            }
+                        }),
+                        new PrimaryDrawerItem().withName("Screen").withIcon(R.drawable.ic_smartphone).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                return false;
+                            }
+                        }),
+                        new PrimaryDrawerItem().withName("Share").withIcon(R.drawable.ic_share).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                            @Override
+                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                                return false;
+                            }
+                        })
+                ).withDrawerGravity(Gravity.END)
+                .append(result);
+    }
 
     public static void increaseSwipeEdgeOfDrawer(DrawerLayout drawerLayoutDrawer) {
         try {
@@ -257,41 +489,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onDestroy();
     }
 
-    /*
-        private void prepareListData() {
-            listDataHeader = new ArrayList<>();
-            listDataChild = new HashMap<>();
-
-            ExpandedMenuModel item1 = new ExpandedMenuModel();
-            item1.setIconName("heading1");
-            item1.setIconImg(android.R.drawable.ic_delete);
-            // Adding data header
-            listDataHeader.add(item1);
-
-            ExpandedMenuModel item2 = new ExpandedMenuModel();
-            item2.setIconName("heading2");
-            item2.setIconImg(android.R.drawable.ic_delete);
-            listDataHeader.add(item2);
-
-            ExpandedMenuModel item3 = new ExpandedMenuModel();
-            item3.setIconName("heading3");
-            item3.setIconImg(android.R.drawable.ic_delete);
-            listDataHeader.add(item3);
-
-            // Adding child data
-            List<String> heading1 = new ArrayList<>();
-            heading1.add("Submenu of item 1");
-
-            List<String> heading2 = new ArrayList<>();
-            heading2.add("Submenu of item 2");
-            heading2.add("Submenu of item 2");
-            heading2.add("Submenu of item 2");
-
-            listDataChild.put(listDataHeader.get(0), heading1);// Header, Child data
-            listDataChild.put(listDataHeader.get(1), heading2);
-
-        }
-    */
     @Override
     public void onBackPressed() {
 
@@ -751,10 +948,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //Method that opens output automatically whenever input is chosen
     private void openOutput() {
-        //hiderightItems(permssion);
+
+        if (result.isDrawerOpen()) {
+            result.closeDrawer();
+        }
+
+        if (!resultAppended.isDrawerOpen()) {
+            resultAppended.openDrawer();
+        }
+
+        /*
         if (!drawerLayout.isDrawerOpen(GravityCompat.END)) {
             drawerLayout.openDrawer(GravityCompat.END);
         }
+        */
     }
 
     private boolean hasCamera() {
@@ -804,33 +1011,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    /*
-    private void hiderightItems(int permission) {
-
-        //navigationView = findViewById(R.id.nav_view_right);
-        //Menu navright_Menu = navigationView.getMenu();
-
-        switch(permission){
-            case 0:
-
-            case 1:
-
-            case 2:
-
-            case 3:
-
-            case 4:
-
-            case 5:
-
-            case 6:
-
-            case 7:
-
-        }
-
-    }
-*/
 
     //Method that resets unnecessary hidden outputs for next input
     private void setRightItemsVisible() {
@@ -843,377 +1023,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navright_Menu.findItem(R.id.nav_screen).setVisible(true);
         navright_Menu.findItem(R.id.nav_speaker).setVisible(true);
     }
-
-/*
-    private void showMessage(int title, int message) {
-        mDialog.setTitle(title);
-        mDialog.setMessage(getText(message));
-        mDialog.show();
-    }
-
-    private NdefRecord newTextRecord(String text, Locale locale, boolean encodeInUtf8) {
-        byte[] langBytes = locale.getLanguage().getBytes(Charset.forName("US-ASCII"));
-
-        Charset utfEncoding = encodeInUtf8 ? Charset.forName("UTF-8") : Charset.forName("UTF-16");
-        byte[] textBytes = text.getBytes(utfEncoding);
-
-        int utfBit = encodeInUtf8 ? 0 : (1 << 7);
-        char status = (char) (utfBit + langBytes.length);
-
-        byte[] data = new byte[1 + langBytes.length + textBytes.length];
-        data[0] = (byte) status;
-        System.arraycopy(langBytes, 0, data, 1, langBytes.length);
-        System.arraycopy(textBytes, 0, data, 1 + langBytes.length, textBytes.length);
-
-        return new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], data);
-    }
-
-    private void showWirelessSettingsDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.nfc_disabled);
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                startActivity(intent);
-            }
-        });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialogInterface, int i) {
-                finish();
-            }
-        });
-        builder.create().show();
-        return;
-    }
-
-    private void resolveIntent(Intent intent) {
-        String action = intent.getAction();
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)
-                || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
-                || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
-            Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-            NdefMessage[] msgs;
-            if (rawMsgs != null) {
-                msgs = new NdefMessage[rawMsgs.length];
-                for (int i = 0; i < rawMsgs.length; i++) {
-                    msgs[i] = (NdefMessage) rawMsgs[i];
-                }
-            } else {
-                // Unknown tag type
-                byte[] empty = new byte[0];
-                byte[] id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
-                Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-                byte[] payload = dumpTagData(tag).getBytes();
-                NdefRecord record = new NdefRecord(NdefRecord.TNF_UNKNOWN, empty, id, payload);
-                NdefMessage msg = new NdefMessage(new NdefRecord[] { record });
-                msgs = new NdefMessage[] { msg };
-                mTags.add(tag);
-            }
-            // Setup the views
-            buildTagViews(msgs);
-        }
-    }
-
-    private String dumpTagData(Tag tag) {
-        StringBuilder sb = new StringBuilder();
-        byte[] id = tag.getId();
-        sb.append("ID (hex): ").append(toHex(id)).append('\n');
-        sb.append("ID (reversed hex): ").append(toReversedHex(id)).append('\n');
-        sb.append("ID (dec): ").append(toDec(id)).append('\n');
-        sb.append("ID (reversed dec): ").append(toReversedDec(id)).append('\n');
-
-        String prefix = "android.nfc.tech.";
-        sb.append("Technologies: ");
-        for (String tech : tag.getTechList()) {
-            sb.append(tech.substring(prefix.length()));
-            sb.append(", ");
-        }
-        sb.delete(sb.length() - 2, sb.length());
-        for (String tech : tag.getTechList()) {
-            if (tech.equals(MifareClassic.class.getName())) {
-                sb.append('\n');
-                String type = "Unknown";
-                try {
-                    MifareClassic mifareTag;
-                    try {
-                        mifareTag = MifareClassic.get(tag);
-                    } catch (Exception e) {
-                        // Fix for Sony Xperia Z3/Z5 phones
-                        tag = cleanupTag(tag);
-                        mifareTag = MifareClassic.get(tag);
-                    }
-                    switch (mifareTag.getType()) {
-                        case MifareClassic.TYPE_CLASSIC:
-                            type = "Classic";
-                            break;
-                        case MifareClassic.TYPE_PLUS:
-                            type = "Plus";
-                            break;
-                        case MifareClassic.TYPE_PRO:
-                            type = "Pro";
-                            break;
-                    }
-                    sb.append("Mifare Classic type: ");
-                    sb.append(type);
-                    sb.append('\n');
-
-                    sb.append("Mifare size: ");
-                    sb.append(mifareTag.getSize() + " bytes");
-                    sb.append('\n');
-
-                    sb.append("Mifare sectors: ");
-                    sb.append(mifareTag.getSectorCount());
-                    sb.append('\n');
-
-                    sb.append("Mifare blocks: ");
-                    sb.append(mifareTag.getBlockCount());
-                } catch (Exception e) {
-                    sb.append("Mifare classic error: " + e.getMessage());
-                }
-            }
-
-            if (tech.equals(MifareUltralight.class.getName())) {
-                sb.append('\n');
-                MifareUltralight mifareUlTag = MifareUltralight.get(tag);
-                String type = "Unknown";
-                switch (mifareUlTag.getType()) {
-                    case MifareUltralight.TYPE_ULTRALIGHT:
-                        type = "Ultralight";
-                        break;
-                    case MifareUltralight.TYPE_ULTRALIGHT_C:
-                        type = "Ultralight C";
-                        break;
-                }
-                sb.append("Mifare Ultralight type: ");
-                sb.append(type);
-            }
-        }
-
-        return sb.toString();
-    }
-
-    private Tag cleanupTag(Tag oTag) {
-        if (oTag == null)
-            return null;
-
-        String[] sTechList = oTag.getTechList();
-
-        Parcel oParcel = Parcel.obtain();
-        oTag.writeToParcel(oParcel, 0);
-        oParcel.setDataPosition(0);
-
-        int len = oParcel.readInt();
-        byte[] id = null;
-        if (len >= 0) {
-            id = new byte[len];
-            oParcel.readByteArray(id);
-        }
-        int[] oTechList = new int[oParcel.readInt()];
-        oParcel.readIntArray(oTechList);
-        Bundle[] oTechExtras = oParcel.createTypedArray(Bundle.CREATOR);
-        int serviceHandle = oParcel.readInt();
-        int isMock = oParcel.readInt();
-        IBinder tagService;
-        if (isMock == 0) {
-            tagService = oParcel.readStrongBinder();
-        } else {
-            tagService = null;
-        }
-        oParcel.recycle();
-
-        int nfca_idx = -1;
-        int mc_idx = -1;
-        short oSak = 0;
-        short nSak = 0;
-
-        for (int idx = 0; idx < sTechList.length; idx++) {
-            if (sTechList[idx].equals(NfcA.class.getName())) {
-                if (nfca_idx == -1) {
-                    nfca_idx = idx;
-                    if (oTechExtras[idx] != null && oTechExtras[idx].containsKey("sak")) {
-                        oSak = oTechExtras[idx].getShort("sak");
-                        nSak = oSak;
-                    }
-                } else {
-                    if (oTechExtras[idx] != null && oTechExtras[idx].containsKey("sak")) {
-                        nSak = (short) (nSak | oTechExtras[idx].getShort("sak"));
-                    }
-                }
-            } else if (sTechList[idx].equals(MifareClassic.class.getName())) {
-                mc_idx = idx;
-            }
-        }
-
-        boolean modified = false;
-
-        if (oSak != nSak) {
-            oTechExtras[nfca_idx].putShort("sak", nSak);
-            modified = true;
-        }
-
-        if (nfca_idx != -1 && mc_idx != -1 && oTechExtras[mc_idx] == null) {
-            oTechExtras[mc_idx] = oTechExtras[nfca_idx];
-            modified = true;
-        }
-
-        if (!modified) {
-            return oTag;
-        }
-
-        Parcel nParcel = Parcel.obtain();
-        nParcel.writeInt(id.length);
-        nParcel.writeByteArray(id);
-        nParcel.writeInt(oTechList.length);
-        nParcel.writeIntArray(oTechList);
-        nParcel.writeTypedArray(oTechExtras, 0);
-        nParcel.writeInt(serviceHandle);
-        nParcel.writeInt(isMock);
-        if (isMock == 0) {
-            nParcel.writeStrongBinder(tagService);
-        }
-        nParcel.setDataPosition(0);
-
-        Tag nTag = Tag.CREATOR.createFromParcel(nParcel);
-
-        nParcel.recycle();
-
-        return nTag;
-    }
-
-    private String toHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = bytes.length - 1; i >= 0; --i) {
-            int b = bytes[i] & 0xff;
-            if (b < 0x10)
-                sb.append('0');
-            sb.append(Integer.toHexString(b));
-            if (i > 0) {
-                sb.append(" ");
-            }
-        }
-        return sb.toString();
-    }
-
-    private String toReversedHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < bytes.length; ++i) {
-            if (i > 0) {
-                sb.append(" ");
-            }
-            int b = bytes[i] & 0xff;
-            if (b < 0x10)
-                sb.append('0');
-            sb.append(Integer.toHexString(b));
-        }
-        return sb.toString();
-    }
-
-    private long toDec(byte[] bytes) {
-        long result = 0;
-        long factor = 1;
-        for (int i = 0; i < bytes.length; ++i) {
-            long value = bytes[i] & 0xffl;
-            result += value * factor;
-            factor *= 256l;
-        }
-        return result;
-    }
-
-    private long toReversedDec(byte[] bytes) {
-        long result = 0;
-        long factor = 1;
-        for (int i = bytes.length - 1; i >= 0; --i) {
-            long value = bytes[i] & 0xffl;
-            result += value * factor;
-            factor *= 256l;
-        }
-        return result;
-    }
-
-    void buildTagViews(NdefMessage[] msgs) {
-        if (msgs == null || msgs.length == 0) {
-            return;
-        }
-        LayoutInflater inflater = LayoutInflater.from(this);
-        LinearLayout content = mTagContent;
-
-        // Parse the first message in the list
-        // Build views for all of the sub records
-        Date now = new Date();
-        List<ParsedNdefRecord> records = NdefMessageParser.parse(msgs[0]);
-        final int size = records.size();
-        for (int i = 0; i < size; i++) {
-            TextView timeView = new TextView(this);
-            timeView.setText(TIME_FORMAT.format(now));
-            content.addView(timeView, 0);
-            ParsedNdefRecord record = records.get(i);
-            content.addView(record.getView(this, inflater, content, i), 1 + i);
-            content.addView(inflater.inflate(R.layout.tag_divider, content, false), 2 + i);
-        }
-    }
-
-    private void clearTags() {
-        mTags.clear();
-        for (int i = mTagContent.getChildCount() -1; i >= 0 ; i--) {
-            View view = mTagContent.getChildAt(i);
-            if (view.getId() != R.id.tag_viewer_text) {
-                mTagContent.removeViewAt(i);
-            }
-        }
-    }
-
-    private void copyIds(String text) {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        ClipData clipData = ClipData.newPlainText("NFC IDs", text);
-        clipboard.setPrimaryClip(clipData);
-        Toast.makeText(this, mTags.size() + " IDs copied", Toast.LENGTH_SHORT).show();
-    }
-
-    private String getIdsHex() {
-        StringBuilder builder = new StringBuilder();
-        for (Tag tag : mTags) {
-            builder.append(toHex(tag.getId()));
-            builder.append('\n');
-        }
-        builder.setLength(builder.length() - 1); // Remove last new line
-        return builder.toString().replace(" ", "");
-    }
-
-    private String getIdsReversedHex() {
-        StringBuilder builder = new StringBuilder();
-        for (Tag tag : mTags) {
-            builder.append(toReversedHex(tag.getId()));
-            builder.append('\n');
-        }
-        builder.setLength(builder.length() - 1); // Remove last new line
-        return builder.toString().replace(" ", "");
-    }
-
-    private String getIdsDec() {
-        StringBuilder builder = new StringBuilder();
-        for (Tag tag : mTags) {
-            builder.append(toDec(tag.getId()));
-            builder.append('\n');
-        }
-        builder.setLength(builder.length() - 1); // Remove last new line
-        return builder.toString();
-    }
-
-    private String getIdsReversedDec() {
-        StringBuilder builder = new StringBuilder();
-        for (Tag tag : mTags) {
-            builder.append(toReversedDec(tag.getId()));
-            builder.append('\n');
-        }
-        builder.setLength(builder.length() - 1); // Remove last new line
-        return builder.toString();
-    }
-
-    @Override
-    public void onNewIntent(Intent intent) {
-        setIntent(intent);
-        resolveIntent(intent);
-    }
-    */
 
 }
