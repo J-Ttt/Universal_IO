@@ -95,8 +95,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final int RequestPermissionCode = 1;
     NavigationView navigationView;
     private String currentInput;
-    final SwipeDetector swipeDetector = new SwipeDetector();
-    float startX, startY, endX, endY;
+
 
 
 
@@ -112,9 +111,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         drawerLayout = findViewById(R.id.drawer_layout);
-/*
-        expandableList = findViewById(R.id.navigationmenuRight);
-*/
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
@@ -125,6 +122,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         initAll();
+
+        /*
+        expandableList = findViewById(R.id.navigationmenuRight);
+*/
 
 /*
         leftDraw = findViewById(R.id.leftDraw);
@@ -181,6 +182,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //MyFragment fragment = (MyFragment)fm.findFragmentById(R.id.content_frame);
         //fragment.method();
 
+
+        //Starts with WelcomeScreen/HomeFragment which is blank atm
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
 
@@ -209,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
     */
-    
+
     public static void increaseSwipeEdgeOfDrawer(DrawerLayout drawerLayoutDrawer) {
         try {
 
@@ -391,6 +394,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Fragment fragment = null;
 
         int id = item.getItemId();
+
+        //Hides unnecessary output options with setVisible when choosing input
 
         switch (id) {
             case R.id.nav_camera:
@@ -579,6 +584,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    //Method that opens output automatically whenever input is chosen
     private void openOutput() {
         //hiderightItems(permssion);
         if (!drawerLayout.isDrawerOpen(GravityCompat.END)) {
@@ -607,9 +613,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initAll() {
+
         setLeftItemsInvisible();
     }
 
+
+    //Method that checks if user has certain function in the phone and disables availability if not
     private void setLeftItemsInvisible() {
         navigationView = findViewById(R.id.nav_view_left);
         Menu navleft_Menu = navigationView.getMenu();
@@ -657,6 +666,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 */
+
+    //Method that resets unnecessary hidden outputs for next input
     private void setRightItemsVisible() {
         navigationView = findViewById(R.id.nav_view_right);
         Menu navright_Menu = navigationView.getMenu();

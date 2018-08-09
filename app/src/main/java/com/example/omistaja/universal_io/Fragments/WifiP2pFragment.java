@@ -182,6 +182,8 @@ public class WifiP2pFragment extends Fragment {
         });
     }
 
+    //Should set other participant Host and other Client //Doesn't work right now
+
     WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo wifiP2pInfo) {
