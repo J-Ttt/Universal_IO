@@ -28,6 +28,9 @@ import com.example.omistaja.universal_io.Fragments.AccelerometerFragment;
 import com.example.omistaja.universal_io.Fragments.BluetoothFragment;
 import com.example.omistaja.universal_io.Fragments.BluetoothSpeakerFragment;
 import com.example.omistaja.universal_io.Fragments.GestureFragment;
+import com.example.omistaja.universal_io.Fragments.GyroscopeFragment;
+import com.example.omistaja.universal_io.Fragments.LHPmeterFragment;
+import com.example.omistaja.universal_io.Fragments.MagnometerFragment;
 import com.example.omistaja.universal_io.Fragments.MicrophoneFragment;
 import com.example.omistaja.universal_io.Fragments.NfcFragment;
 import com.example.omistaja.universal_io.Fragments.PhotoFragment;
@@ -106,9 +109,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Fragment fragment = null;
     Drawer result = null;
     Drawer resultAppended = null;
-    PrimaryDrawerItem wifiItem, btItem, nfcItem, usbItem, screenItem, shareItem, speakerItem;
-
-
+    PrimaryDrawerItem wifiItem, btItem, nfcItem, usbItem, screenItem, shareItem, speakerItem, micItem, bt2Item, wifi2Item, touchItem, nfc2Item, usb2Item;
+    SecondaryDrawerItem photoItem, videoItem, accelItem, gyroItem, magnoItem, miscItem;
 
 
     @Override
@@ -130,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         toggle.setDrawerIndicatorEnabled(false);
+        increaseSwipeEdgeOfDrawer2(result);
+        decreaseSwipeEdgeOfDrawer2(resultAppended);
         increaseSwipeEdgeOfDrawer(drawerLayout);
         toggle.syncState();
 
@@ -209,8 +213,118 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         AlertDialog.Builder inputOutput = new AlertDialog.Builder(this);
 
+        //Input drawer content
+        photoItem = new SecondaryDrawerItem().withName("Photo").withIcon(R.drawable.ic_photo_camera).withIdentifier(11).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Photo";
+                resultAppended.removeItems(3, 4);
+                openOutput();
+                return false;
+            }
+        });
+        videoItem = new SecondaryDrawerItem().withName("Video").withIcon(R.drawable.ic_videocam).withIdentifier(12).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Video";
+                resultAppended.removeItems(3, 4);
+                openOutput();
+                return false;
+            }
+        });
+        micItem = new PrimaryDrawerItem().withName("Microphone").withIcon(R.drawable.ic_mic).withIdentifier(13).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Microphone";
+                resultAppended.removeItem(4);
+                openOutput();
+                return false;
+            }
+        });
+        bt2Item = new PrimaryDrawerItem().withName("Bluetooth").withIcon(R.drawable.ic_bluetooth).withIdentifier(14).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Bluetooth";
+                resultAppended.removeItems(1, 4, 5);
+                openOutput();
+                return false;
+            }
+        });
+        wifi2Item = new PrimaryDrawerItem().withName("WiFi").withIcon(R.drawable.ic_wifi).withIdentifier(15).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "WiFi";
+                resultAppended.removeItems(2, 4, 5);
+                openOutput();
+                return false;
+            }
+        });
+        accelItem = new SecondaryDrawerItem().withName("Accelerometer").withIcon(R.drawable.ic_accelerometer).withIdentifier(16).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Accelerometer";
+                resultAppended.removeItem(3);
+                openOutput();
+                return false;
+            }
+        });
+        gyroItem = new SecondaryDrawerItem().withName("Gyroscope").withIcon(R.drawable.ic_gyroscope).withIdentifier(17).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Gyroscope";
+                resultAppended.removeItem(3);
+                openOutput();
+                return false;
+            }
+        });
+        magnoItem = new SecondaryDrawerItem().withName("Magnetometer").withIcon(R.drawable.ic_magneto).withIdentifier(18).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Magnetometer";
+                resultAppended.removeItem(3);
+                openOutput();
+                return false;
+            }
+        });
+        miscItem = new SecondaryDrawerItem().withName("Misc Sensors").withIcon(R.drawable.ic_magneto).withIdentifier(19).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "MiscSensors";
+                resultAppended.removeItem(3);
+                openOutput();
+                return false;
+            }
+        });
+        touchItem = new PrimaryDrawerItem().withName("Gesture").withIcon(R.drawable.ic_touch).withIdentifier(20).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Gesture";
+                resultAppended.removeItems(3, 4);
+                openOutput();
+                return false;
+            }
+        });
+        nfc2Item = new PrimaryDrawerItem().withName("NFC").withIcon(R.drawable.ic_nfc).withIdentifier(21).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "NFC";
+                resultAppended.removeItems(1, 2, 3, 5);
+                openOutput();
+                return false;
+            }
+        });
+        usb2Item = new PrimaryDrawerItem().withName("USB").withIcon(R.drawable.ic_usb).withIdentifier(22).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "USB";
+                resultAppended.removeItems(1, 2, 3, 4);
+                openOutput();
+                return false;
+            }
+        });
 
 
+        //Output drawer content
         wifiItem = new PrimaryDrawerItem().withName("WiFi").withIcon(R.drawable.ic_wifi).withIdentifier(1).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
             @Override
             public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -465,7 +579,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         alertDialog.show();
                         break;
                     }
-                    case "Sensors": {
+                    case "Accelerometer": {
                         inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     @Override
@@ -488,12 +602,82 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         alertDialog.show();
                         break;
                     }
+                    case "Gyroscope": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new GyroscopeFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "Magnetometer": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new MagnometerFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+
                     case "Gesture": {
                         inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                         fragment = new GestureFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "MiscSensors": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new LHPmeterFragment();
                                         FragmentManager fragmentManager = getSupportFragmentManager();
                                         FragmentTransaction ft = fragmentManager.beginTransaction();
                                         ft.replace(R.id.content_frame, fragment);
@@ -590,118 +774,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .withFireOnInitialOnClick(false)
                 .withHeader(R.layout.nav_header_main)
                 .addDrawerItems(
-                        new ExpandableDrawerItem().withName("Camera").withIcon(R.drawable.ic_photo_camera).withSubItems(
-                                new SecondaryDrawerItem().withName("Photo").withIcon(R.drawable.ic_photo_camera).withIdentifier(11).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                                    @Override
-                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        currentInput = "Photo";
-                                        resultAppended.removeItems(3, 4);
-                                        openOutput();
-                                        return false;
-                                    }
-                                }),
-                                new SecondaryDrawerItem().withName("Video").withIcon(R.drawable.ic_videocam).withIdentifier(12).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                                    @Override
-                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        currentInput = "Video";
-                                        resultAppended.removeItems(3, 4);
-                                        openOutput();
-                                        return false;
-                                    }
-                                })
-                        ),
-                        new PrimaryDrawerItem().withName("Microphone").withIcon(R.drawable.ic_mic).withIdentifier(13).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                            @Override
-                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                currentInput = "Microphone";
-                                resultAppended.removeItem(4);
-                                openOutput();
-                                return false;
-                            }
-                        }),
-                        new PrimaryDrawerItem().withName("Bluetooth").withIcon(R.drawable.ic_bluetooth).withIdentifier(14).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                            @Override
-                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                currentInput = "Bluetooth";
-                                resultAppended.removeItems(1, 4, 5);
-                                openOutput();
-                                return false;
-                            }
-                        }),
-                        new PrimaryDrawerItem().withName("WiFi").withIcon(R.drawable.ic_wifi).withIdentifier(15).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                            @Override
-                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                currentInput = "WiFi";
-                                resultAppended.removeItems(2, 4, 5);
-                                openOutput();
-                                return false;
-                            }
-                        }),
-                        new ExpandableDrawerItem().withName("Sensors").withIcon(R.drawable.ic_sensor).withSubItems(
-                                new SecondaryDrawerItem().withName("Accelerometer").withIcon(R.drawable.ic_accelerometer).withIdentifier(16).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                                    @Override
-                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        currentInput = "Accelerometer";
-                                        resultAppended.removeItem(3);
-                                        openOutput();
-                                        return false;
-                                    }
-                                }),
-                                new SecondaryDrawerItem().withName("Gyroscope").withIcon(R.drawable.ic_gyroscope).withIdentifier(17).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                                    @Override
-                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        currentInput = "Gyroscope";
-                                        resultAppended.removeItem(3);
-                                        openOutput();
-                                        return false;
-                                    }
-                                }),
-                                new SecondaryDrawerItem().withName("Magnetometer").withIcon(R.drawable.ic_magneto).withIdentifier(18).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                                    @Override
-                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        currentInput = "Magnetometer";
-                                        resultAppended.removeItem(3);
-                                        openOutput();
-                                        return false;
-                                    }
-                                }),
-                                new SecondaryDrawerItem().withName("Misc Sensors").withIcon(R.drawable.ic_magneto).withIdentifier(19).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                                    @Override
-                                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                        currentInput = "Misc Sensors";
-                                        resultAppended.removeItem(3);
-                                        openOutput();
-                                        return false;
-                                    }
-                                })
-                        ),
-                        new PrimaryDrawerItem().withName("Gesture").withIcon(R.drawable.ic_touch).withIdentifier(20).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                            @Override
-                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                currentInput = "Gesture";
-                                resultAppended.removeItems(3, 4);
-                                openOutput();
-                                return false;
-                            }
-                        }),
-                        new PrimaryDrawerItem().withName("NFC").withIcon(R.drawable.ic_nfc).withIdentifier(21).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                            @Override
-                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                currentInput = "NFC";
-                                resultAppended.removeItems(1, 2, 3, 5);
-                                openOutput();
-                                return false;
-                            }
-                        }),
-                        new PrimaryDrawerItem().withName("USB").withIcon(R.drawable.ic_usb).withIdentifier(22).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                            @Override
-                            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                                currentInput = "USB";
-                                resultAppended.removeItems(1, 2, 3, 4);
-                                openOutput();
-                                return false;
-                            }
-                        })
+                        new ExpandableDrawerItem().withName("Camera").withIcon(R.drawable.ic_photo_camera).withSubItems(photoItem, videoItem),
+                        micItem,
+                        bt2Item,
+                        wifi2Item,
+                        new ExpandableDrawerItem().withName("Sensors").withIcon(R.drawable.ic_sensor).withSubItems(accelItem, gyroItem, magnoItem, miscItem),
+                        touchItem,
+                        nfc2Item,
+                        usb2Item
                 ).build();
 
         //Output Drawer
@@ -712,9 +792,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .withDrawerGravity(Gravity.END)
                 .append(result);
 
+
+
+    }
+
+    public void resetRightDrawer() {
+
     }
 
 
+    public static void increaseSwipeEdgeOfDrawer2(Drawer result) {
+        try {
+
+            Field mDragger = result.getClass().getDeclaredField("mLeftDragger");//mRightDragger or mLeftDragger based on Drawer Gravity
+            mDragger.setAccessible(true);
+            ViewDragHelper draggerObj = (ViewDragHelper) mDragger.get(result);
+
+            Field mEdgeSize = draggerObj.getClass().getDeclaredField("mEdgeSize");
+            mEdgeSize.setAccessible(true);
+            int edge = mEdgeSize.getInt(draggerObj);
+
+            mEdgeSize.setInt(draggerObj, 1080);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void decreaseSwipeEdgeOfDrawer2(Drawer resultAppended) {
+        try {
+            Field mDragger2 = resultAppended.getClass().getDeclaredField("mRightDragger");//mRightDragger or mLeftDragger based on Drawer Gravity
+            mDragger2.setAccessible(true);
+            ViewDragHelper draggerObj2 = (ViewDragHelper) mDragger2.get(resultAppended);
+
+            Field mEdgeSize2 = draggerObj2.getClass().getDeclaredField("mEdgeSize");
+            mEdgeSize2.setAccessible(true);
+            int edge2 = mEdgeSize2.getInt(draggerObj2);
+
+            mEdgeSize2.setInt(draggerObj2, -500);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void increaseSwipeEdgeOfDrawer(DrawerLayout drawerLayoutDrawer) {
         try {
@@ -1333,11 +1451,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if (!hasWifi()) {
             navleft_Menu.findItem(R.id.nav_wifi).setVisible(false);
-            resultAppended.removeItem(15);
+            result.removeItem(15);
         }
         if (!hasNfc()) {
             navleft_Menu.findItem(R.id.nav_nfc).setVisible(false);
-            resultAppended.removeItem(21);
+            result.removeItem(21);
         }
     }
 
