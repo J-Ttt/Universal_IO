@@ -1,34 +1,23 @@
 package com.example.omistaja.universal_io;
 
 import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
-import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.nfc.tech.IsoDep;
-import android.nfc.tech.MifareClassic;
-import android.nfc.tech.MifareUltralight;
-import android.nfc.tech.Ndef;
-import android.nfc.tech.NdefFormatable;
-import android.nfc.tech.NfcA;
-import android.nfc.tech.NfcB;
-import android.nfc.tech.NfcF;
-import android.nfc.tech.NfcV;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.omistaja.universal_io.Fragments.AccelerometerFragment;
 import com.example.omistaja.universal_io.Fragments.BluetoothFragment;
 import com.example.omistaja.universal_io.Fragments.BluetoothSpeakerFragment;
 import com.example.omistaja.universal_io.Fragments.GestureFragment;
 import com.example.omistaja.universal_io.Fragments.GyroscopeFragment;
+import com.example.omistaja.universal_io.Fragments.HomeFragment;
 import com.example.omistaja.universal_io.Fragments.LHPmeterFragment;
 import com.example.omistaja.universal_io.Fragments.MagnometerFragment;
 import com.example.omistaja.universal_io.Fragments.MicrophoneFragment;
@@ -37,45 +26,8 @@ import com.example.omistaja.universal_io.Fragments.PhotoFragment;
 import com.example.omistaja.universal_io.Fragments.UsbFragment;
 import com.example.omistaja.universal_io.Fragments.VideoFragment;
 import com.example.omistaja.universal_io.Fragments.WifiP2pFragment;
-import com.example.omistaja.universal_io.NFC.NdefMessageParser;
-import com.example.omistaja.universal_io.NFC.ParsedNdefRecord;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.ShareActionProvider;
-import androidx.core.app.ActivityCompat;
-import androidx.core.view.MenuItemCompat;
-import androidx.customview.widget.ViewDragHelper;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import android.os.IBinder;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-
 import com.google.android.material.navigation.NavigationView;
-
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.slidingpanelayout.widget.SlidingPaneLayout;
-
-import android.view.Menu;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.omistaja.universal_io.Fragments.HomeFragment;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.ExpandableDrawerItem;
@@ -84,13 +36,18 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.customview.widget.ViewDragHelper;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.CAMERA;
@@ -100,17 +57,17 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final int RequestPermissionCode = 1;
     private static final String TAG = "MainActivity";
     FloatingActionButton leftDraw, rightDraw;
-    private DrawerLayout drawerLayout;
-    public static final int RequestPermissionCode = 1;
     NavigationView navigationView;
-    private String currentInput, currentOutput;
     Fragment fragment = null;
     Drawer result = null;
     Drawer resultAppended = null;
     PrimaryDrawerItem wifiItem, btItem, nfcItem, usbItem, screenItem, shareItem, speakerItem, micItem, bt2Item, wifi2Item, touchItem, nfc2Item, usb2Item;
     SecondaryDrawerItem photoItem, videoItem, accelItem, gyroItem, magnoItem, miscItem;
+    private DrawerLayout drawerLayout;
+    private String currentInput, currentOutput;
 
 
     @Override
@@ -131,9 +88,608 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(toggle);
 
 
+        AlertDialog.Builder inputOutput = new AlertDialog.Builder(this);
+
+        //Input drawer contents
+        photoItem = new SecondaryDrawerItem().withName("Photo").withIcon(R.drawable.ic_photo_camera).withIdentifier(11).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Photo";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItems(3, 4);
+                openOutput();
+                return false;
+            }
+        });
+        videoItem = new SecondaryDrawerItem().withName("Video").withIcon(R.drawable.ic_videocam).withIdentifier(12).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Video";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItems(3, 4);
+                openOutput();
+                return false;
+            }
+        });
+        micItem = new PrimaryDrawerItem().withName("Microphone").withIcon(R.drawable.ic_mic).withIdentifier(13).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Microphone";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItem(4);
+                openOutput();
+                return false;
+            }
+        });
+        bt2Item = new PrimaryDrawerItem().withName("Bluetooth").withIcon(R.drawable.ic_bluetooth).withIdentifier(14).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Bluetooth";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItems(1, 4, 5);
+                openOutput();
+                return false;
+            }
+        });
+        wifi2Item = new PrimaryDrawerItem().withName("WiFi").withIcon(R.drawable.ic_wifi).withIdentifier(15).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "WiFi";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItems(2, 4, 5);
+                openOutput();
+                return false;
+            }
+        });
+        accelItem = new SecondaryDrawerItem().withName("Accelerometer").withIcon(R.drawable.ic_accelerometer).withIdentifier(16).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Accelerometer";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItem(3);
+                openOutput();
+                return false;
+            }
+        });
+        gyroItem = new SecondaryDrawerItem().withName("Gyroscope").withIcon(R.drawable.ic_gyroscope).withIdentifier(17).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Gyroscope";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItem(3);
+                openOutput();
+                return false;
+            }
+        });
+        magnoItem = new SecondaryDrawerItem().withName("Magnetometer").withIcon(R.drawable.ic_magneto).withIdentifier(18).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Magnetometer";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItem(3);
+                openOutput();
+                return false;
+            }
+        });
+        miscItem = new SecondaryDrawerItem().withName("Misc Sensors").withIcon(R.drawable.ic_magneto).withIdentifier(19).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "MiscSensors";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItem(3);
+                openOutput();
+                return false;
+            }
+        });
+        touchItem = new PrimaryDrawerItem().withName("Gesture").withIcon(R.drawable.ic_touch).withIdentifier(20).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "Gesture";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItems(3, 4);
+                openOutput();
+                return false;
+            }
+        });
+        nfc2Item = new PrimaryDrawerItem().withName("NFC").withIcon(R.drawable.ic_nfc).withIdentifier(21).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "NFC";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItems(1, 2, 3, 5);
+                openOutput();
+                return false;
+            }
+        });
+        usb2Item = new PrimaryDrawerItem().withName("USB").withIcon(R.drawable.ic_usb).withIdentifier(22).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentInput = "USB";
+                resultAppended.resetDrawerContent();
+                resultAppended.removeItems(1, 2, 3, 4);
+                openOutput();
+                return false;
+            }
+        });
+
+
+        //Output drawer contents
+        wifiItem = new PrimaryDrawerItem().withName("WiFi").withIcon(R.drawable.ic_wifi).withIdentifier(1).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentOutput = "WiFi";
+                switch (currentInput) {
+                    case "Camera":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Microphone":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Bluetooth":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "WiFi":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Sensors":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Gesture":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return false;
+            }
+        });
+        btItem = new PrimaryDrawerItem().withName("Bluetooth").withIcon(R.drawable.ic_bluetooth).withIdentifier(2).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentOutput = "Bluetoooth";
+                switch (currentInput) {
+                    case "Camera":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Microphone":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Bluetooth":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Sensors":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Gesture":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "USB":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return false;
+            }
+        });
+        speakerItem = new PrimaryDrawerItem().withName("Speaker").withIcon(R.drawable.ic_speaker).withIdentifier(3).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentOutput = "Speaker";
+                switch (currentInput) {
+                    case "Microphone": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new MicrophoneFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "Bluetooth": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new BluetoothSpeakerFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "WiFi":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return false;
+            }
+        });
+        nfcItem = new PrimaryDrawerItem().withName("NFC").withIcon(R.drawable.ic_nfc).withIdentifier(4).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentOutput = "NFC";
+                switch (currentInput) {
+                    case "Camera":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Sensors":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "NFC":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return false;
+            }
+        });
+        usbItem = new PrimaryDrawerItem().withName("USB").withIcon(R.drawable.ic_usb).withIdentifier(5).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentOutput = "USB";
+                switch (currentInput) {
+                    case "Camera":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Microphone":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Sensors":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Gesture":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "USB":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return false;
+            }
+        });
+        screenItem = new PrimaryDrawerItem().withName("Screen").withIcon(R.drawable.ic_smartphone).withIdentifier(6).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentOutput = "Screen";
+                switch (currentInput) {
+                    case "Photo": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new PhotoFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "Video": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new VideoFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "Microphone":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Bluetooth": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new BluetoothFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "WiFi": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new WifiP2pFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "Accelerometer": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new AccelerometerFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "Gyroscope": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new GyroscopeFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "Magnetometer": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new MagnometerFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+
+                    case "Gesture": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new GestureFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "MiscSensors": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new LHPmeterFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                    case "NFC":
+                        Intent intent = new Intent(MainActivity.this, NfcFragment.class);
+                        startActivity(intent);
+                        break;
+                    case "USB": {
+                        inputOutput.setMessage("Do you want to use " + currentInput + " to " + currentOutput + "?").setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        fragment = new UsbFragment();
+                                        FragmentManager fragmentManager = getSupportFragmentManager();
+                                        FragmentTransaction ft = fragmentManager.beginTransaction();
+                                        ft.replace(R.id.content_frame, fragment);
+                                        ft.commit();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                });
+                        AlertDialog alertDialog = inputOutput.create();
+                        alertDialog.setTitle("Are you sure?");
+                        alertDialog.show();
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+        shareItem = new PrimaryDrawerItem().withName("Share").withIcon(R.drawable.ic_share).withIdentifier(7).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+            @Override
+            public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                currentOutput = "Share";
+                switch (currentInput) {
+                    case "Camera":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Microphone":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Bluetooth":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "WiFi":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Sensors":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Gesture":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "NFC":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "USB":
+                        Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return false;
+            }
+        });
+
+/*
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+*/
+        //Input Drawer
+        result = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withDelayOnDrawerClose(150000000)
+                .withFireOnInitialOnClick(false)
+                .withHeader(R.layout.nav_header_main)
+                .addDrawerItems(
+                        new ExpandableDrawerItem().withName("Camera").withIcon(R.drawable.ic_photo_camera).withSubItems(photoItem, videoItem),
+                        micItem,
+                        bt2Item,
+                        wifi2Item,
+                        new ExpandableDrawerItem().withName("Sensors").withIcon(R.drawable.ic_sensor).withSubItems(accelItem, gyroItem, magnoItem, miscItem),
+                        touchItem,
+                        nfc2Item,
+                        usb2Item
+                ).withSavedInstance(savedInstanceState)
+                .build();
+
+        //Output Drawer
+        resultAppended = new DrawerBuilder()
+                .withActivity(this)
+                .withHeader(R.layout.nav_header_main2)
+                .addDrawerItems(wifiItem, btItem, speakerItem, nfcItem, usbItem, screenItem, shareItem)
+                .withDrawerGravity(Gravity.END)
+                .withSavedInstance(savedInstanceState)
+                .append(result);
+
         toggle.setDrawerIndicatorEnabled(false);
+
+        /*Does not work
         increaseSwipeEdgeOfDrawer2(result);
         decreaseSwipeEdgeOfDrawer2(resultAppended);
+        */
+
         increaseSwipeEdgeOfDrawer(drawerLayout);
         toggle.syncState();
 
@@ -185,28 +741,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ft.commit();
 
     }
-
-    /*
-        NfcFragment fragment;
-        @Override
-        public void onNewIntent(Intent intent) {
-            super.onNewIntent(intent);
-
-            // Check if the fragment is an instance of the right fragment
-            if (fragment instanceof NfcFragment) {
-                Log.d(TAG, "Do I get here?!");
-                NfcFragment my = fragment;
-                // Pass intent or its data to the fragment's method
-                setIntent(intent);
-                my.resolveIntent(intent);
-                Log.d(TAG, "Yes I do, starting NFC intent");
-                //my.processNFC(intent.getStringExtra());
-            }
-
-        }
-    */
-
-    //POSSIBLE CHANGE TO THIS DRAWERBUILD BY MIKE PENZ
 
     public void drawerBuild() {
 
@@ -793,13 +1327,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .append(result);
 
 
-
     }
 
-    public void resetRightDrawer() {
+    public void resetRightDrawer(int reset) {
 
     }
-
 
     public static void increaseSwipeEdgeOfDrawer2(Drawer result) {
         try {
@@ -817,6 +1349,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             e.printStackTrace();
         }
     }
+
+    /*
+        NfcFragment fragment;
+        @Override
+        public void onNewIntent(Intent intent) {
+            super.onNewIntent(intent);
+
+            // Check if the fragment is an instance of the right fragment
+            if (fragment instanceof NfcFragment) {
+                Log.d(TAG, "Do I get here?!");
+                NfcFragment my = fragment;
+                // Pass intent or its data to the fragment's method
+                setIntent(intent);
+                my.resolveIntent(intent);
+                Log.d(TAG, "Yes I do, starting NFC intent");
+                //my.processNFC(intent.getStringExtra());
+            }
+
+        }
+    */
+
+    //POSSIBLE CHANGE TO THIS DRAWERBUILD BY MIKE PENZ
 
     public static void decreaseSwipeEdgeOfDrawer2(Drawer resultAppended) {
         try {
