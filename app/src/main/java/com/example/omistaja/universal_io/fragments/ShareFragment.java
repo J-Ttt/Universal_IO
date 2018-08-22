@@ -12,9 +12,7 @@ import android.view.ViewGroup;
 
 import com.example.omistaja.universal_io.R;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class ShareFragment extends Fragment {
 
     Context _context;

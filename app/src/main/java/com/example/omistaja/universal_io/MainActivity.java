@@ -9,12 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Switch;
-import android.widget.TextView;
 
-import com.example.omistaja.universal_io.fragments.NfcFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -86,15 +82,15 @@ public class MainActivity extends AppCompatActivity {
 */
 
     }
-
-        NfcFragment fragment = new NfcFragment();
+/*
+        Fragment fragment;
         @Override
         public void onNewIntent(Intent intent) {
             super.onNewIntent(intent);
             // Check if the fragment is an instance of the right fragment
-            if (fragment != null) {
+            if (fragment instanceof NfcFragment) {
                 Log.d(TAG, "Do I get here?!");
-                NfcFragment my = fragment;
+                NfcFragment my = (NfcFragment) fragment;
                 // Pass intent or its data to the fragment's method
                 setIntent(intent);
                 my.resolveIntent(intent);
@@ -102,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 //my.processNFC(intent.getStringExtra());
             }
         }
-
+*/
 
 
 

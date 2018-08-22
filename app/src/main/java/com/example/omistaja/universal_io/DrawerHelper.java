@@ -368,11 +368,8 @@ public class DrawerHelper {
                 case NFC: {
                     inputOutput.setMessage(String.format("Do you want to use %s to %s ?", currentInput, currentOutput)).setCancelable(false)
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                fragment = new NfcFragment();
-                                FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
-                                FragmentTransaction ft = fragmentManager.beginTransaction();
-                                ft.replace(R.id.content_frame, fragment);
-                                ft.commit();
+                                Intent intent = new Intent(_context, NfcFragment.class);
+                                _context.startActivity(intent);
                             })
                             .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel());
                     AlertDialog alertDialog = inputOutput.create();
@@ -770,11 +767,8 @@ public class DrawerHelper {
                 case NFC: {
                     inputOutput.setMessage(String.format("Do you want to use %s to %s ?", currentInput, currentOutput)).setCancelable(false)
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                fragment = new NfcFragment();
-                                FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
-                                FragmentTransaction ft = fragmentManager.beginTransaction();
-                                ft.replace(R.id.content_frame, fragment);
-                                ft.commit();
+                                Intent intent = new Intent(_context, NfcFragment.class);
+                                _context.startActivity(intent);
                             })
                             .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel());
                     AlertDialog alertDialog = inputOutput.create();

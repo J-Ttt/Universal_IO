@@ -21,9 +21,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class LHPmeterFragment extends Fragment implements SensorEventListener {
 
     Context _context;

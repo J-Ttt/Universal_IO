@@ -23,7 +23,6 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -41,7 +40,6 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,14 +55,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-
-import androidx.fragment.app.Fragment;
-
-import static android.content.Context.CLIPBOARD_SERVICE;
 
 
-public class NfcFragment extends Fragment {
+
+public class NfcFragment extends Activity {
 
     public TextView nfcView;
     private static final DateFormat TIME_FORMAT = SimpleDateFormat.getDateTimeInstance();
@@ -75,46 +69,48 @@ public class NfcFragment extends Fragment {
     private AlertDialog mDialog;
     private List<Tag> mTags = new ArrayList<>();
     private static final String TAG = "NFC";
-    Context _context;
+
 
     public NfcFragment(){}
 
-
+/*
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         _context = context;
 
     }
+    */
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
 
-        final View rootView = inflater.inflate(R.layout.tag_viewer, container, false);
+        //final View rootView = inflater.inflate(R.layout.tag_viewer, container, false);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.tag_viewer);
+        mTagContent = findViewById(R.id.list);
+        resolveIntent(getIntent());
 
-        mTagContent = rootView.findViewById(R.id.list);
-        resolveIntent(Objects.requireNonNull(getActivity()).getIntent());
+        mDialog = new AlertDialog.Builder(this).setNeutralButton("Ok", null).create();
 
-        mDialog = new AlertDialog.Builder(_context).setNeutralButton("Ok", null).create();
-
-        mAdapter = NfcAdapter.getDefaultAdapter(_context);
+        mAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mAdapter == null) {
             showMessage(R.string.error, R.string.no_nfc);
-            getActivity().finish();
+            finish();
         }
 
-        mPendingIntent = PendingIntent.getActivity(_context, 0,
-                new Intent(_context, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        mPendingIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         mNdefPushMessage = new NdefMessage(new NdefRecord[] { newTextRecord(
                 "Message from NFC Reader :-)", Locale.ENGLISH, true) });
 
         //((MainActivity)getActivity()).initSomething);
 
-       return rootView;
+       //return rootView;
 
     }
 
-    /*
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -123,7 +119,7 @@ public class NfcFragment extends Fragment {
         resolveIntent(intent);
         Log.d(TAG, "YUP");
     }
-*/
+
     @Override
     public void onResume() {
         super.onResume();
@@ -131,7 +127,7 @@ public class NfcFragment extends Fragment {
             if (!mAdapter.isEnabled()) {
                 showWirelessSettingsDialog();
             }
-            mAdapter.enableForegroundDispatch(getActivity(), mPendingIntent, null, null);
+            mAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
         }
     }
 
@@ -139,7 +135,7 @@ public class NfcFragment extends Fragment {
     public void onPause() {
         super.onPause();
         if (mAdapter != null) {
-            mAdapter.disableForegroundDispatch(getActivity());
+            mAdapter.disableForegroundDispatch(this);
         }
     }
 
@@ -167,13 +163,13 @@ public class NfcFragment extends Fragment {
     }
 
     private void showWirelessSettingsDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(_context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.nfc_disabled);
         builder.setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
             Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
             startActivity(intent);
         });
-        builder.setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> getActivity().finish());
+        builder.setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> finish());
         builder.create().show();
         return;
     }
@@ -426,7 +422,7 @@ public class NfcFragment extends Fragment {
         if (msgs == null || msgs.length == 0) {
             return;
         }
-        LayoutInflater inflater = LayoutInflater.from(_context);
+        LayoutInflater inflater = LayoutInflater.from(this);
         LinearLayout content = mTagContent;
 
         // Parse the first message in the list
@@ -435,11 +431,11 @@ public class NfcFragment extends Fragment {
         List<ParsedNdefRecord> records = NdefMessageParser.parse(msgs[0]);
         final int size = records.size();
         for (int i = 0; i < size; i++) {
-            TextView timeView = new TextView(_context);
+            TextView timeView = new TextView(this);
             timeView.setText(TIME_FORMAT.format(now));
             content.addView(timeView, 0);
             ParsedNdefRecord record = records.get(i);
-            content.addView(record.getView(getActivity(), inflater, content, i), 1 + i);
+            content.addView(record.getView(this, inflater, content, i), 1 + i);
             content.addView(inflater.inflate(R.layout.tag_divider, content, false), 2 + i);
         }
     }
@@ -455,10 +451,10 @@ public class NfcFragment extends Fragment {
     }
 
     private void copyIds(String text) {
-        ClipboardManager clipboard = (ClipboardManager) Objects.requireNonNull(getActivity()).getSystemService(CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager) this.getSystemService(CLIPBOARD_SERVICE);
         ClipData clipData = ClipData.newPlainText("NFC IDs", text);
         clipboard.setPrimaryClip(clipData);
-        Toast.makeText(_context, mTags.size() + " IDs copied", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, mTags.size() + " IDs copied", Toast.LENGTH_SHORT).show();
     }
 
     private String getIdsHex() {

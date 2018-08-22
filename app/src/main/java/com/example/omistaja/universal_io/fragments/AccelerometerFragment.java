@@ -23,9 +23,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class AccelerometerFragment extends Fragment implements SensorEventListener {
 
     private Context _context;

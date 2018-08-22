@@ -26,9 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class UsbFragment extends Fragment {
 
     private static final String TAG = "UsbFragment";
