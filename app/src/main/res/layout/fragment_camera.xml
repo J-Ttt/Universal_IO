@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragments.PhotoFragment">
+    tools:context=".fragments.PhotoFragment">
 
 
     <TextView
@@ -46,6 +46,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
@@ -53,11 +55,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/colorPrimary"
+        android:background="@color/material_drawer_background"
         app:itemTextColor="@color/camera_bottom_colors"
         app:itemIconTint="@color/camera_bottom_colors"
         app:menu="@menu/fragment_camera_bottom" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
