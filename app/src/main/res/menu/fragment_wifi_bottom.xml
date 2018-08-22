@@ -3,11 +3,11 @@
 
     <item
         android:id="@+id/nav_p2p"
-        android:icon="@drawable/ic_p2p"
+        android:icon="@drawable/ic_p2p_black"
         android:title="P2P" />
     <item
         android:id="@+id/nav_ap"
-        android:icon="@drawable/ic_ap"
+        android:icon="@drawable/ic_ap_black"
         android:title="AP" />
 
 </menu>

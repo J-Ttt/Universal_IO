@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".Fragments.WifiApFragment">
+    tools:context=".fragments.WifiApFragment">
 
     <TextView
         android:id="@+id/textSSID1"
@@ -22,7 +22,7 @@
         android:layout_below="@id/textSSID1"
         android:layout_marginTop="5dp"
         app:password_visible="false"
-        app:show_drawable="@drawable/ic_showpass"
+        app:show_drawable="@drawable/ic_showpass_black"
         app:hide_drawable="@drawable/ic_hidepass"/>
 
     <Button

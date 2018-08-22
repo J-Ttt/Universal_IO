@@ -3,10 +3,10 @@
 
     <item
         android:id="@+id/nav_photobut"
-        android:icon="@drawable/ic_photo_camera"
+        android:icon="@drawable/ic_photo_camera_black"
         android:title="@string/nav_photo" />
     <item
         android:id="@+id/nav_videobut"
-        android:icon="@drawable/ic_videocam"
+        android:icon="@drawable/ic_videocam_black"
         android:title="@string/nav_video" />
 </menu>

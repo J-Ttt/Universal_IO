@@ -36,9 +36,10 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
     implementation 'com.github.anshulagarwal06:PasswordEditText:v1.0'
     implementation 'com.google.guava:guava:25.1-jre'
-    implementation("com.mikepenz:materialdrawer:6.0.8@aar") {
+    implementation("com.mikepenz:materialdrawer:6.1.0-rc01") {
         transitive = true
     }
+    implementation 'androidx.media:media:1.0.0-beta01'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha3'
