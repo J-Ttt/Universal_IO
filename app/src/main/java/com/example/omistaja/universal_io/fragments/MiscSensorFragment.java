@@ -21,14 +21,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
 
-public class LHPmeterFragment extends Fragment implements SensorEventListener {
+public class MiscSensorFragment extends Fragment implements SensorEventListener {
 
     Context _context;
     Sensor lightSensor, humiSensor, pressuSensor, proxiSensor, tempSensor;
     SensorManager sensorManager;
     TextView lightSens, humiSens, pressuSens, tempSens, proxiSens;
 
-    public LHPmeterFragment() {
+    public MiscSensorFragment() {
 
     }
 

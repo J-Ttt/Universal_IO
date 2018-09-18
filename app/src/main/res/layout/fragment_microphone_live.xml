@@ -4,59 +4,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.GyroscopeFragment">
+    tools:context=".fragments.MicrophoneLiveFragment">
 
     <TextView
-        android:id="@+id/tvGyro"
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sensor (Gyroscope)"
+        android:text="Microphone Live"
         android:textAlignment="center"
         android:textSize="50sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/gyroY"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/gyroZ"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gyroX"
-        app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
-        android:id="@+id/gyroZ"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/livebutton"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="128dp"
-        android:text=""
-        android:textSize="30sp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="108dp"
+        android:text="Live"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/stopbutton"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="144dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginStart="60dp"
+        android:text="Stop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gyroY" />
-
-    <TextView
-        android:id="@+id/gyroX"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:text=""
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/livebutton"
+        app:layout_constraintVertical_bias="0.387" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView3"
+        android:id="@+id/bottomNavigationView4"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -65,6 +54,8 @@
         android:background="@color/material_drawer_background"
         app:itemTextColor="@color/camera_bottom_colors"
         app:itemIconTint="@color/camera_bottom_colors"
-        app:menu="@menu/fragment_sensors_bottom" />
+        app:menu="@menu/fragment_microphone_bottom" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

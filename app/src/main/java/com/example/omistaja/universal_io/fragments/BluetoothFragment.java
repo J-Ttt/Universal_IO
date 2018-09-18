@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ public class BluetoothFragment extends Fragment {
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     BluetoothDevice[] btArray;
 
+
     SendReceive sendReceive;
 
     static final int STATE_LISTENING = 1;
@@ -72,7 +74,6 @@ public class BluetoothFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_bluetooth, container, false);
-
         scanbtn = rootView.findViewById(R.id.btscanbtn);
         btenable = rootView.findViewById(R.id.btenable);
         sendmsg = rootView.findViewById(R.id.sendbtn);
@@ -172,32 +173,6 @@ public class BluetoothFragment extends Fragment {
         }
     }
 
-    Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-
-            switch (msg.what) {
-                case STATE_LISTENING:
-                    status.setText("Listening..");
-                    break;
-                case STATE_CONNECTING:
-                    status.setText("Connecting..");
-                    break;
-                case STATE_CONNECTED:
-                    status.setText("Connected");
-                    break;
-                case STATE_CONNECTION_FAILED:
-                    status.setText("Connection failed");
-                    break;
-                case STATE_MESSAGE_RECEIVED:
-                    byte[] readBuff = (byte[]) msg.obj;
-                    String tempMsg = new String(readBuff, 0, msg.arg1);
-                    msgview.setText(tempMsg);
-                    break;
-            }
-            return true;
-        }
-    });
 
     public void isBTenabled() {
         if (mBluetoothAdapter.isEnabled()) {
@@ -253,126 +228,160 @@ public class BluetoothFragment extends Fragment {
         }
     };
 
-    private class ServerClass extends Thread {
+    Handler mHandler = new Handler(new Handler.Callback() {
 
-        private BluetoothServerSocket serverSocket;
-
-        public ServerClass() {
-            try {
-                serverSocket = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(FRAG_NAME, MY_UUID);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void run() {
-            BluetoothSocket socket = null;
-
-            while (socket == null) {
-                try {
-                    Message message = Message.obtain();
-                    message.what = STATE_CONNECTING;
-                    handler.sendMessage(message);
-
-                    socket = serverSocket.accept();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Message message = Message.obtain();
-                    message.what = STATE_CONNECTION_FAILED;
-                    handler.sendMessage(message);
-                }
-
-                if (socket != null) {
-                    Message message = Message.obtain();
-                    message.what = STATE_CONNECTED;
-                    handler.sendMessage(message);
-
-                    sendReceive = new SendReceive(socket);
-                    sendReceive.start();
-
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case STATE_LISTENING:
+                    status.setText("Listening..");
                     break;
-                }
+                case STATE_CONNECTING:
+                    status.setText("Connecting..");
+                    break;
+                case STATE_CONNECTED:
+                    status.setText("Connected");
+                    break;
+                case STATE_CONNECTION_FAILED:
+                    status.setText("Connection failed");
+                    break;
+                case STATE_MESSAGE_RECEIVED:
+                    byte[] readBuff = (byte[]) msg.obj;
+                    String tempMsg = new String(readBuff, 0, msg.arg1);
+                    msgview.setText(tempMsg);
+                    break;
             }
+            return true;
+        }
+    });
+
+
+private class ServerClass extends Thread {
+
+    private BluetoothServerSocket serverSocket;
+
+
+
+
+    public ServerClass() {
+        try {
+            serverSocket = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(FRAG_NAME, MY_UUID);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private class ClientClass extends Thread {
+    public void run() {
 
-        private BluetoothDevice device;
-        private BluetoothSocket socket;
+        BluetoothSocket socket = null;
 
-        public ClientClass(BluetoothDevice device1) {
-
-            device = device1;
-
+        while (socket == null) {
             try {
-                socket = device.createRfcommSocketToServiceRecord(MY_UUID);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void run() {
-            try {
-                socket.connect();
                 Message message = Message.obtain();
-                message.what = STATE_CONNECTED;
-                handler.sendMessage(message);
-
-                sendReceive = new SendReceive(socket);
-                sendReceive.start();
-
+                message.what = STATE_CONNECTING;
+                mHandler.sendMessage(message);
+                socket = serverSocket.accept();
             } catch (IOException e) {
                 e.printStackTrace();
                 Message message = Message.obtain();
                 message.what = STATE_CONNECTION_FAILED;
-                handler.sendMessage(message);
+                mHandler.sendMessage(message);
+            }
+
+            if (socket != null) {
+                Message message = Message.obtain();
+                message.what = STATE_CONNECTED;
+                mHandler.sendMessage(message);
+
+                sendReceive = new SendReceive(socket);
+                sendReceive.start();
+
+                break;
+            }
+        }
+    }
+}
+
+private class ClientClass extends Thread {
+
+    private BluetoothDevice device;
+    private BluetoothSocket socket;
+
+
+    public ClientClass(BluetoothDevice device1) {
+
+        device = device1;
+
+        try {
+            socket = device.createRfcommSocketToServiceRecord(MY_UUID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void run() {
+        try {
+            socket.connect();
+            Message message = Message.obtain();
+            message.what = STATE_CONNECTED;
+            mHandler.sendMessage(message);
+
+            sendReceive = new SendReceive(socket);
+            sendReceive.start();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Message message = Message.obtain();
+            message.what = STATE_CONNECTION_FAILED;
+            mHandler.sendMessage(message);
+        }
+    }
+}
+
+private class SendReceive extends Thread {
+
+    private final BluetoothSocket bluetoothSocket;
+    private final InputStream inputStream;
+    private final OutputStream outputStream;
+
+
+
+    public SendReceive(BluetoothSocket socket) {
+        bluetoothSocket = socket;
+        InputStream tempIn = null;
+        OutputStream tempOut = null;
+
+        try {
+            tempIn = bluetoothSocket.getInputStream();
+            tempOut = bluetoothSocket.getOutputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        inputStream = tempIn;
+        outputStream = tempOut;
+    }
+
+    public void run() {
+        byte[] buffer = new byte[1024];
+        int bytes;
+
+        while (true) {
+            try {
+                bytes = inputStream.read(buffer);
+                mHandler.obtainMessage(STATE_MESSAGE_RECEIVED, bytes, -1, buffer).sendToTarget();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
 
-    private class SendReceive extends Thread {
-
-        private final BluetoothSocket bluetoothSocket;
-        private final InputStream inputStream;
-        private final OutputStream outputStream;
-
-        public SendReceive(BluetoothSocket socket) {
-            bluetoothSocket = socket;
-            InputStream tempIn = null;
-            OutputStream tempOut = null;
-
-            try {
-                tempIn = bluetoothSocket.getInputStream();
-                tempOut = bluetoothSocket.getOutputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            inputStream = tempIn;
-            outputStream = tempOut;
-        }
-
-        public void run() {
-            byte[] buffer = new byte[1024];
-            int bytes;
-
-            while (true) {
-                try {
-                    bytes = inputStream.read(buffer);
-                    handler.obtainMessage(STATE_MESSAGE_RECEIVED, bytes, -1, buffer).sendToTarget();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        public void write(byte[] bytes) {
-            try {
-                outputStream.write(bytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public void write(byte[] bytes) {
+        try {
+            outputStream.write(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+}
 }

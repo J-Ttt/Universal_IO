@@ -30,9 +30,7 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
     private Sensor accelerometer;
     private SensorManager sensorManager;
 
-    public AccelerometerFragment() {
-
-    }
+    public AccelerometerFragment() {}
 
     @Override
     public void onAttach(Context context) {
@@ -43,7 +41,7 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = item -> {
         final Fragment gyroFrag = new GyroscopeFragment();
         final Fragment magnoFrag = new MagnometerFragment();
-        final Fragment miscFrag = new LHPmeterFragment();
+        final Fragment miscFrag = new MiscSensorFragment();
 
         FragmentTransaction ft = Objects.requireNonNull(getFragmentManager()).beginTransaction();
 

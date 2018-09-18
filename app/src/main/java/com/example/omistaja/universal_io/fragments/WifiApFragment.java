@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,25 +64,18 @@ public class WifiApFragment extends Fragment {
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = item -> {
-        Fragment fragment = null;
+        final Fragment p2pFrag = new WifiP2pFragment();
 
-        int id = item.getItemId();
+        FragmentTransaction ft = Objects.requireNonNull(getFragmentManager()).beginTransaction();
 
-        switch (id) {
-            case R.id.nav_p2p:
-                fragment = new WifiP2pFragment();
-                break;
+        switch (item.getItemId()) {
             case R.id.nav_ap:
-                fragment = new WifiApFragment();
-                break;
+                return true;
+            case R.id.nav_p2p:
+                ft.replace(R.id.content_frame, p2pFrag).commit();
+                return true;
         }
 
-        if (fragment != null) {
-            FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
-            FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(R.id.content_frame, fragment);
-            ft.commit();
-        }
 
         return true;
     };
@@ -93,6 +87,7 @@ public class WifiApFragment extends Fragment {
 
         BottomNavigationView p2pap = rootView.findViewById(R.id.bottomNavigationView2);
         p2pap.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        p2pap.setSelectedItemId(R.id.nav_ap);
 
         apscanbtn = rootView.findViewById(R.id.apscanbtn);
         wifiOnOff = rootView.findViewById(R.id.wifiOnOff);
@@ -177,7 +172,7 @@ public class WifiApFragment extends Fragment {
         wifilist.setAdapter(arrayAdapter);
     }
 
-    private BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
+        private BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d("WifScanner", "onReceive");

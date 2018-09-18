@@ -10,12 +10,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.omistaja.universal_io.fragments.MicrophoneLiveFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         settingsButton = findViewById(R.id.settingsButton);
-        requestPermission();
+        //requestPermission();
 
         if (useLightTheme) {
             toolbar.setTitleTextColor(Color.BLACK);
@@ -77,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         //Starts with WelcomeScreen/HomeFragment which is blank atm
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.content_frame, new HomeFragment());
+        ft.replace(R.id.content_frame, new MicrophoneLiveFragment());
         ft.commit();
 */
 
@@ -88,9 +91,9 @@ public class MainActivity extends AppCompatActivity {
         public void onNewIntent(Intent intent) {
             super.onNewIntent(intent);
             // Check if the fragment is an instance of the right fragment
-            if (fragment instanceof NfcFragment) {
+            if (fragment instanceof NfcActivity) {
                 Log.d(TAG, "Do I get here?!");
-                NfcFragment my = (NfcFragment) fragment;
+                NfcActivity my = (NfcActivity) fragment;
                 // Pass intent or its data to the fragment's method
                 setIntent(intent);
                 my.resolveIntent(intent);
@@ -131,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+
+        getSupportFragmentManager().popBackStack();
     }
 
     @Override
@@ -159,17 +164,16 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
-
+/*
     private void requestPermission() {
         ActivityCompat.requestPermissions(MainActivity.this, new
                 String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO, CAMERA, READ_EXTERNAL_STORAGE, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION}, REQUEST_PERMISSION_CODE);
     }
 
 
-
+/*
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (requestCode == REQUEST_PERMISSION_CODE && grantResults.length > 0) {
             boolean storagePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
             boolean recordPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED;

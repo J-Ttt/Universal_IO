@@ -81,26 +81,16 @@ public class WifiP2pFragment extends Fragment {
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = item -> {
-        Fragment fragment = null;
+        final Fragment apFrag = new WifiApFragment();
 
-        int id = item.getItemId();
+        FragmentTransaction ft = Objects.requireNonNull(getFragmentManager()).beginTransaction();
 
-        switch (id) {
-            case R.id.nav_p2p:
-                fragment = new WifiP2pFragment();
-                break;
+        switch (item.getItemId()) {
             case R.id.nav_ap:
-                fragment = new WifiApFragment();
-                break;
-            default:
-                break;
-        }
-
-        if (fragment != null) {
-            FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
-            FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(R.id.content_frame, fragment);
-            ft.commit();
+                ft.replace(R.id.content_frame, apFrag).commit();
+                return true;
+            case R.id.nav_p2p:
+                return true;
         }
 
         return true;
@@ -112,6 +102,7 @@ public class WifiP2pFragment extends Fragment {
 
         BottomNavigationView p2pap = rootView.findViewById(R.id.bottomNavigationView2);
         p2pap.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        p2pap.setSelectedItemId(R.id.nav_p2p);
 
         p2pscanbtn = rootView.findViewById(R.id.p2pscanbtn);
         wifiOnOff = rootView.findViewById(R.id.wifiOnOff);
@@ -248,23 +239,6 @@ public class WifiP2pFragment extends Fragment {
         _context.registerReceiver(wifiReceiver, mIntentFilter);
     }
 
-    Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-
-            switch (msg.what) {
-                case MESSAGE_READ:
-                    byte[] readBuff = (byte[]) msg.obj;
-                    String tempMsg = new String(readBuff, 0, msg.arg1);
-                    msgview2.setText(tempMsg);
-                    break;
-            }
-
-            return true;
-        }
-    });
-
-
     WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener() {
         @Override
         public void onPeersAvailable(WifiP2pDeviceList peerList) {
@@ -339,6 +313,23 @@ public class WifiP2pFragment extends Fragment {
         }
     };
 
+
+    Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case MESSAGE_READ:
+                    byte[] readBuff = (byte[]) msg.obj;
+                    String tempMsg = new String(readBuff, 0, msg.arg1);
+                    msgview2.setText(tempMsg);
+                    break;
+            }
+
+            return true;
+        }
+    });
+
+
     public class ServerClass extends Thread {
         Socket socket;
         ServerSocket serverSocket;
@@ -388,7 +379,7 @@ public class WifiP2pFragment extends Fragment {
                 try {
                     bytes = inputStream.read(buffer);
                     if (bytes > 0) {
-                        handler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                        mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

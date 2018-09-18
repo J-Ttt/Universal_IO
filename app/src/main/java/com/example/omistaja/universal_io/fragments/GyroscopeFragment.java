@@ -24,7 +24,7 @@ import java.util.Objects;
 public class GyroscopeFragment extends Fragment implements SensorEventListener {
 
     Context _context;
-    TextView gyroX, gyroY, gyroZ;
+    TextView gyroX, gyroY, gyroZ, tvGyro;
     SensorManager sensorManager;
     Sensor gyroScope;
 
@@ -41,7 +41,7 @@ public class GyroscopeFragment extends Fragment implements SensorEventListener {
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = item -> {
         final Fragment acceloFrag = new AccelerometerFragment();
         final Fragment magnoFrag = new MagnometerFragment();
-        final Fragment miscFrag = new LHPmeterFragment();
+        final Fragment miscFrag = new MiscSensorFragment();
 
         FragmentTransaction ft = Objects.requireNonNull(getFragmentManager()).beginTransaction();
 
@@ -75,6 +75,7 @@ public class GyroscopeFragment extends Fragment implements SensorEventListener {
         gyroX = rootView.findViewById(R.id.gyroX);
         gyroY = rootView.findViewById(R.id.gyroY);
         gyroZ = rootView.findViewById(R.id.gyroZ);
+        tvGyro = rootView.findViewById(R.id.tvGyro);
 
         return rootView;
     }

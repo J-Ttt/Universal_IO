@@ -10,6 +10,8 @@ import android.os.Environment;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +19,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.omistaja.universal_io.R;
+import com.example.omistaja.universal_io.RuntimePermissions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.IOException;
+import java.util.Objects;
 
 
 public class MicrophoneFragment extends Fragment {
@@ -28,9 +33,28 @@ public class MicrophoneFragment extends Fragment {
     private MediaRecorder myMediaRecorder;
     private String outputFile;
 
+
     public MicrophoneFragment() {
 
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = item -> {
+        final Fragment micliveFrag = new MicrophoneLiveFragment();
+
+        FragmentTransaction ft = Objects.requireNonNull(getFragmentManager()).beginTransaction();
+
+
+        switch (item.getItemId()) {
+            case R.id.nav_ap:
+                return true;
+            case R.id.nav_p2p:
+                ft.replace(R.id.content_frame, micliveFrag).commit();
+                return true;
+        }
+
+
+        return true;
+    };
 
     public void onAttach(Context context) {
         super.onAttach(context);

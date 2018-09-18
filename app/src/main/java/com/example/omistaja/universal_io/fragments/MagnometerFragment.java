@@ -47,7 +47,7 @@ public class MagnometerFragment extends Fragment implements SensorEventListener 
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = item -> {
         final Fragment acceloFrag = new AccelerometerFragment();
         final Fragment gyroFrag = new GyroscopeFragment();
-        final Fragment miscFrag = new LHPmeterFragment();
+        final Fragment miscFrag = new MiscSensorFragment();
 
         FragmentTransaction ft = Objects.requireNonNull(getFragmentManager()).beginTransaction();
 

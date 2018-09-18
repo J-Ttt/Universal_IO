@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.example.omistaja.universal_io.fragments;
+package com.example.omistaja.universal_io;
 
 
 import android.app.Activity;
@@ -58,7 +58,7 @@ import java.util.Locale;
 
 
 
-public class NfcFragment extends Activity {
+public class NfcActivity extends Activity {
 
     public TextView nfcView;
     private static final DateFormat TIME_FORMAT = SimpleDateFormat.getDateTimeInstance();
@@ -71,7 +71,7 @@ public class NfcFragment extends Activity {
     private static final String TAG = "NFC";
 
 
-    public NfcFragment(){}
+    public NfcActivity(){}
 
 /*
     @Override

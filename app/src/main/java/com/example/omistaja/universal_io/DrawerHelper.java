@@ -1,12 +1,15 @@
 package com.example.omistaja.universal_io;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -15,10 +18,9 @@ import com.example.omistaja.universal_io.fragments.BluetoothFragment;
 import com.example.omistaja.universal_io.fragments.BluetoothSpeakerFragment;
 import com.example.omistaja.universal_io.fragments.GestureFragment;
 import com.example.omistaja.universal_io.fragments.GyroscopeFragment;
-import com.example.omistaja.universal_io.fragments.LHPmeterFragment;
+import com.example.omistaja.universal_io.fragments.MiscSensorFragment;
 import com.example.omistaja.universal_io.fragments.MagnometerFragment;
 import com.example.omistaja.universal_io.fragments.MicrophoneFragment;
-import com.example.omistaja.universal_io.fragments.NfcFragment;
 import com.example.omistaja.universal_io.fragments.PhotoFragment;
 import com.example.omistaja.universal_io.fragments.UsbFragment;
 import com.example.omistaja.universal_io.fragments.VideoFragment;
@@ -34,16 +36,20 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.lang.reflect.Field;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.customview.widget.ViewDragHelper;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-public class DrawerHelper {
+class DrawerHelper implements ActivityCompat.OnRequestPermissionsResultCallback {
 
+    private static final String TAG = "DrawerHelper";
     private Context _context;
     private Fragment fragment = null;
     Drawer inputDrawer = null;
@@ -70,19 +76,21 @@ public class DrawerHelper {
     private static final String NFC = "NFC";
     private static final String SPEAKER = "Speaker";
     private static final String SCREEN = "Screen";
+    RuntimePermissions permissions;
 
-    public DrawerHelper(Context context) {
+    DrawerHelper(Context context) {
         this._context = context;
+        permissions = new RuntimePermissions(context);
     }
 
-    public void initDrawersDark(Toolbar toolbar, Bundle savedInstanceState) {
+    void initDrawersDark(Toolbar toolbar, Bundle savedInstanceState) {
 
-        int[] r = {1,2,3,4,5,6,7};
+        int[] r = {1, 2, 3, 4, 5, 6, 7};
 
         //Builds confirmation dialog for user on input and output
         AlertDialog.Builder inputOutput = new AlertDialog.Builder(_context);
 
-        fragAct = (AppCompatActivity)this._context;
+        fragAct = (AppCompatActivity) this._context;
 
         //Output drawer contents
         wifiOutput = new PrimaryDrawerItem().withName(WIFI).withIcon(R.drawable.ic_wifi_white).withTextColor(Color.WHITE).withIdentifier(1).withOnDrawerItemClickListener((view, position, drawerItem) -> {
@@ -139,11 +147,13 @@ public class DrawerHelper {
                 case MICROPHONE: {
                     inputOutput.setMessage(String.format("Do you want to use %s to %s ?", currentInput, currentOutput)).setCancelable(false)
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                fragment = new MicrophoneFragment();
-                                FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
-                                FragmentTransaction ft = fragmentManager.beginTransaction();
-                                ft.replace(R.id.content_frame, fragment);
-                                ft.commit();
+                                if (permissions.isMicrophonePermissionGranted()) {
+                                    fragment = new MicrophoneFragment();
+                                    FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
+                                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                                    ft.replace(R.id.content_frame, fragment);
+                                    ft.commit();
+                                }
                             })
                             .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel());
                     AlertDialog alertDialog = inputOutput.create();
@@ -214,11 +224,13 @@ public class DrawerHelper {
                 case PHOTO: {
                     inputOutput.setMessage(String.format("Do you want to use %s to %s ?", currentInput, currentOutput)).setCancelable(false)
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                fragment = new PhotoFragment();
-                                FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
-                                FragmentTransaction ft = fragmentManager.beginTransaction();
-                                ft.replace(R.id.content_frame, fragment);
-                                ft.commit();
+                                if (!permissions.isCameraPermissionGranted()) {
+                                    fragment = new PhotoFragment();
+                                    FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
+                                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                                    ft.replace(R.id.content_frame, fragment);
+                                    ft.commit();
+                                }
                             })
                             .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel());
                     AlertDialog alertDialog = inputOutput.create();
@@ -229,11 +241,13 @@ public class DrawerHelper {
                 case VIDEO: {
                     inputOutput.setMessage(String.format("Do you want to use %s to %s ?", currentInput, currentOutput)).setCancelable(false)
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                fragment = new VideoFragment();
-                                FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
-                                FragmentTransaction ft = fragmentManager.beginTransaction();
-                                ft.replace(R.id.content_frame, fragment);
-                                ft.commit();
+                                if (permissions.isCameraPermissionGranted()) {
+                                    fragment = new VideoFragment();
+                                    FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
+                                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                                    ft.replace(R.id.content_frame, fragment);
+                                    ft.commit();
+                                }
                             })
                             .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel());
                     AlertDialog alertDialog = inputOutput.create();
@@ -262,11 +276,13 @@ public class DrawerHelper {
                 case WIFIP2P: {
                     inputOutput.setMessage(String.format("Do you want to use %s to %s ?", currentInput, currentOutput)).setCancelable(false)
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                fragment = new WifiP2pFragment();
-                                FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
-                                FragmentTransaction ft = fragmentManager.beginTransaction();
-                                ft.replace(R.id.content_frame, fragment);
-                                ft.commit();
+                                if (permissions.isLocationPermissionGranted()) {
+                                    fragment = new WifiP2pFragment();
+                                    FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
+                                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                                    ft.replace(R.id.content_frame, fragment);
+                                    ft.commit();
+                                }
                             })
                             .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel());
                     AlertDialog alertDialog = inputOutput.create();
@@ -277,11 +293,13 @@ public class DrawerHelper {
                 case WIFIAP: {
                     inputOutput.setMessage(String.format("Do you want to use %s to %s ?", currentInput, currentOutput)).setCancelable(false)
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                fragment = new WifiApFragment();
-                                FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
-                                FragmentTransaction ft = fragmentManager.beginTransaction();
-                                ft.replace(R.id.content_frame, fragment);
-                                ft.commit();
+                                if (permissions.isLocationPermissionGranted()) {
+                                    fragment = new WifiApFragment();
+                                    FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
+                                    FragmentTransaction ft = fragmentManager.beginTransaction();
+                                    ft.replace(R.id.content_frame, fragment);
+                                    ft.commit();
+                                }
                             })
                             .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel());
                     AlertDialog alertDialog = inputOutput.create();
@@ -353,7 +371,7 @@ public class DrawerHelper {
                 case MISCSENSOR: {
                     inputOutput.setMessage(String.format("Do you want to use %s to %s ?", currentInput, currentOutput)).setCancelable(false)
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                fragment = new LHPmeterFragment();
+                                fragment = new MiscSensorFragment();
                                 FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
                                 FragmentTransaction ft = fragmentManager.beginTransaction();
                                 ft.replace(R.id.content_frame, fragment);
@@ -368,7 +386,7 @@ public class DrawerHelper {
                 case NFC: {
                     inputOutput.setMessage(String.format("Do you want to use %s to %s ?", currentInput, currentOutput)).setCancelable(false)
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                Intent intent = new Intent(_context, NfcFragment.class);
+                                Intent intent = new Intent(_context, NfcActivity.class);
                                 _context.startActivity(intent);
                             })
                             .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel());
@@ -433,7 +451,7 @@ public class DrawerHelper {
         btInput = newPrimaryItemDrawer(BLUETOOTH, R.drawable.ic_bluetooth_white, Color.WHITE, Color.GRAY, 14, r, btOutput, screenOutput, speakerOutput);
         wifip2pInput = newSecondaryItemDrawer(WIFIP2P, 3, R.drawable.ic_p2p_white, Color.WHITE, Color.GRAY, 15, r, wifiOutput, screenOutput, speakerOutput);
         wifiapInput = newSecondaryItemDrawer(WIFIAP, 3, R.drawable.ic_ap_white, Color.WHITE, Color.GRAY, 16, r, wifiOutput, screenOutput, speakerOutput);
-        acceleroInput = newSecondaryItemDrawer(ACCELERO, 3,  R.drawable.ic_accelerometer_white, Color.WHITE, Color.GRAY, 17, r, wifiOutput, btOutput, usbOutput, screenOutput, nfcOutput);
+        acceleroInput = newSecondaryItemDrawer(ACCELERO, 3, R.drawable.ic_accelerometer_white, Color.WHITE, Color.GRAY, 17, r, wifiOutput, btOutput, usbOutput, screenOutput, nfcOutput);
         gyroscopeInput = newSecondaryItemDrawer(GYROSCOPE, 3, R.drawable.ic_gyroscope_white, Color.WHITE, Color.GRAY, 18, r, wifiOutput, btOutput, usbOutput, screenOutput, nfcOutput);
         magnometerInput = newSecondaryItemDrawer(MAGNETO, 3, R.drawable.ic_magneto_white, Color.WHITE, Color.GRAY, 19, r, wifiOutput, btOutput, usbOutput, screenOutput, nfcOutput);
         miscsensorInput = newSecondaryItemDrawer(MISCSENSOR, 3, R.drawable.ic_magneto_white, Color.WHITE, Color.GRAY, 20, r, wifiOutput, btOutput, usbOutput, screenOutput, nfcOutput);
@@ -443,7 +461,7 @@ public class DrawerHelper {
 
         //Input Drawer
         inputDrawer = new DrawerBuilder()
-                .withActivity((Activity)_context)
+                .withActivity((Activity) _context)
                 .withSelectedItem(-1)
                 .withToolbar(toolbar)
                 .withHeader(R.layout.nav_header_main)
@@ -466,7 +484,7 @@ public class DrawerHelper {
 */
         //Output Drawer
         outputDrawer = new DrawerBuilder()
-                .withActivity((Activity)_context)
+                .withActivity((Activity) _context)
                 .withSelectedItem(-1)
                 .withHeader(R.layout.nav_header_main2)
                 .withHasStableIds(true)
@@ -475,13 +493,13 @@ public class DrawerHelper {
                 .build();
     }
 
-    public void initDrawersLight(Toolbar toolbar, Bundle savedInstanceState) {
-        int[] r = {1,2,3,4,5,6,7};
+    void initDrawersLight(Toolbar toolbar, Bundle savedInstanceState) {
+        int[] r = {1, 2, 3, 4, 5, 6, 7};
 
         //Builds confirmation dialog for user on input and output
         AlertDialog.Builder inputOutput = new AlertDialog.Builder(_context);
 
-        fragAct = (AppCompatActivity)this._context;
+        fragAct = (AppCompatActivity) this._context;
 
         //Output drawer contents
         wifiOutput = new PrimaryDrawerItem().withSelectable(false).withName(WIFI).withIcon(R.drawable.ic_wifi_black).withTextColor(Color.BLACK).withIdentifier(1).withOnDrawerItemClickListener((view, position, drawerItem) -> {
@@ -752,7 +770,7 @@ public class DrawerHelper {
                 case MISCSENSOR: {
                     inputOutput.setMessage(String.format("Do you want to use %s to %s ?", currentInput, currentOutput)).setCancelable(false)
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                fragment = new LHPmeterFragment();
+                                fragment = new MiscSensorFragment();
                                 FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
                                 FragmentTransaction ft = fragmentManager.beginTransaction();
                                 ft.replace(R.id.content_frame, fragment);
@@ -767,7 +785,7 @@ public class DrawerHelper {
                 case NFC: {
                     inputOutput.setMessage(String.format("Do you want to use %s to %s ?", currentInput, currentOutput)).setCancelable(false)
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                Intent intent = new Intent(_context, NfcFragment.class);
+                                Intent intent = new Intent(_context, NfcActivity.class);
                                 _context.startActivity(intent);
                             })
                             .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.cancel());
@@ -832,7 +850,7 @@ public class DrawerHelper {
         btInput = newPrimaryItemDrawer(BLUETOOTH, R.drawable.ic_bluetooth_black, Color.BLACK, Color.WHITE, 14, r, btOutput, screenOutput, speakerOutput);
         wifip2pInput = newSecondaryItemDrawer(WIFIP2P, 3, R.drawable.ic_p2p_black, Color.BLACK, Color.WHITE, 15, r, wifiOutput, screenOutput, speakerOutput);
         wifiapInput = newSecondaryItemDrawer(WIFIAP, 3, R.drawable.ic_ap_black, Color.BLACK, Color.WHITE, 16, r, wifiOutput, screenOutput, speakerOutput);
-        acceleroInput = newSecondaryItemDrawer(ACCELERO, 3,  R.drawable.ic_accelerometer_black, Color.BLACK, Color.WHITE, 17, r, wifiOutput, btOutput, usbOutput, screenOutput, nfcOutput);
+        acceleroInput = newSecondaryItemDrawer(ACCELERO, 3, R.drawable.ic_accelerometer_black, Color.BLACK, Color.WHITE, 17, r, wifiOutput, btOutput, usbOutput, screenOutput, nfcOutput);
         gyroscopeInput = newSecondaryItemDrawer(GYROSCOPE, 3, R.drawable.ic_gyroscope_black, Color.BLACK, Color.WHITE, 18, r, wifiOutput, btOutput, usbOutput, screenOutput, nfcOutput);
         magnometerInput = newSecondaryItemDrawer(MAGNETO, 3, R.drawable.ic_magneto_black, Color.BLACK, Color.WHITE, 19, r, wifiOutput, btOutput, usbOutput, screenOutput, nfcOutput);
         miscsensorInput = newSecondaryItemDrawer(MISCSENSOR, 3, R.drawable.ic_magneto_black, Color.BLACK, Color.WHITE, 20, r, wifiOutput, btOutput, usbOutput, screenOutput, nfcOutput);
@@ -842,7 +860,7 @@ public class DrawerHelper {
 
         //Input Drawer
         inputDrawer = new DrawerBuilder()
-                .withActivity((Activity)_context)
+                .withActivity((Activity) _context)
                 .withSelectedItem(-1)
                 .withToolbar(toolbar)
                 .withHeader(R.layout.nav_header_main)
@@ -865,7 +883,7 @@ public class DrawerHelper {
 */
         //Output Drawer
         outputDrawer = new DrawerBuilder()
-                .withActivity((Activity)_context)
+                .withActivity((Activity) _context)
                 .withSelectedItem(-1)
                 .withHeader(R.layout.nav_header_main2)
                 .withHasStableIds(true)
@@ -888,6 +906,7 @@ public class DrawerHelper {
         });
 
     }
+
 
     private SecondaryDrawerItem newSecondaryItemDrawer(String name, int l, int imgres, int color, int selectedColor, int identifier, int[] identifiersToBeRemoved, IDrawerItem... drawerItems) {
 
@@ -918,6 +937,10 @@ public class DrawerHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    static void onLongPress(Drawer inputDrawer) {
+
     }
 
     private void openOutput() {
@@ -989,5 +1012,69 @@ public class DrawerHelper {
 
     private boolean hasMagno() {
         return _context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case RuntimePermissions.CAMERA_PERMISSION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    switch (currentInput) {
+                        case PHOTO: {
+                            fragment = new PhotoFragment();
+                            FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
+                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                            ft.replace(R.id.content_frame, fragment);
+                            ft.commit();
+                            break;
+                        }
+                        case VIDEO: {
+                            fragment = new VideoFragment();
+                            FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
+                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                            ft.replace(R.id.content_frame, fragment);
+                            ft.commit();
+                            break;
+                        }
+                    }
+                }
+                break;
+            case RuntimePermissions.MICROPHONE_PERMISSION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    switch (currentInput) {
+                        case MICROPHONE: {
+                            fragment = new MicrophoneFragment();
+                            FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
+                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                            ft.replace(R.id.content_frame, fragment);
+                            ft.commit();
+                            break;
+                        }
+                    }
+                }
+                break;
+            case RuntimePermissions.LOCATION_PERMISSION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    switch (currentInput) {
+                        case WIFIAP: {
+                            fragment = new WifiApFragment();
+                            FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
+                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                            ft.replace(R.id.content_frame, fragment);
+                            ft.commit();
+                            break;
+                        }
+                        case WIFIP2P: {
+                            fragment = new WifiP2pFragment();
+                            FragmentManager fragmentManager = fragAct.getSupportFragmentManager();
+                            FragmentTransaction ft = fragmentManager.beginTransaction();
+                            ft.replace(R.id.content_frame, fragment);
+                            ft.commit();
+                            break;
+                        }
+                    }
+                }
+                break;
+        }
     }
 }
